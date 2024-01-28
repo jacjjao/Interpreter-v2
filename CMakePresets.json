@@ -1,0 +1,44 @@
+﻿{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "x64-msvc-base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/install/${presetName}",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            },
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "x64-msvc-debug",
+            "displayName": "x64 MSVC Debug",
+            "inherits": "x64-msvc-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_FLAGS": "/analyze /W4 /MP /fsanitize=address /MDd /Od /EHsc"
+            }
+        },
+        {
+            "name": "x64-msvc-release",
+            "displayName": "x64 MSVC Release",
+            "inherits": "x64-msvc-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_FLAGS": "/analyze /W4 /MP /MD /GL /incremental /O2 /EHsc"
+            }
+        }
+    ]
+}
