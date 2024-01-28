@@ -17,6 +17,10 @@ std::string toString(TokenType type)
         return "Div";
     case TokenType::Negative:
         return "Negative";
+    case TokenType::LeftParen:
+        return "LeftParen";
+    case TokenType::RightParen:
+        return "RightParen";
     default:
         throw std::invalid_argument{ "Invalid token type" };
     }

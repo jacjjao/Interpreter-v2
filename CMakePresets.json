@@ -28,7 +28,7 @@
             "inherits": "x64-msvc-base",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_CXX_FLAGS": "/analyze /W4 /MP /fsanitize=address /MDd /Od /EHsc"
+                "CMAKE_CXX_FLAGS": "/analyze /W4 /MP /fsanitize=address /MDd /Od /EHsc /Zi"
             }
         },
         {

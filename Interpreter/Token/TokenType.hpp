@@ -9,7 +9,9 @@ enum class TokenType
     Minus,
     Mul,
     Div,
-    Negative
+    Negative,
+    LeftParen,
+    RightParen
 };
 
 std::string toString(TokenType type);
