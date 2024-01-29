@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Token/Token.hpp"
+#include "Expr.hpp"
 
 namespace Lox
 {
