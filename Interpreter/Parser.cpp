@@ -2,6 +2,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <iostream>
+#include "Error.hpp"
 
 Parser::Parser(std::span<Token> tokens) : 
     tokens_(tokens),
@@ -9,9 +10,22 @@ Parser::Parser(std::span<Token> tokens) :
 {
 }
 
+ParseError Parser::error(const Token& token, const char* err_msg)
+{
+    Lox::error(token, err_msg);
+    return ParseError(err_msg);
+}
+
 std::unique_ptr<Expr> Parser::parse()
 {
-    return expression();
+    try
+    {
+        return expression();
+    }
+    catch (const ParseError& e)
+    {
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Expr> Parser::expression()
@@ -64,7 +78,7 @@ std::unique_ptr<Expr> Parser::primary()
         consume(TokenType::RightParen, "Cannot match parentheses");
         return std::unique_ptr<Expr>(new GroupingExpr(std::move(expr)));
     }
-    throw std::runtime_error("Cannot match primary");
+    throw error(peek(), "Expect expression.");
 }
 
 void Parser::consume()
@@ -72,10 +86,10 @@ void Parser::consume()
     ++cur_;
 }
 
-void Parser::consume(TokenType type, const std::string& err_msg)
+void Parser::consume(TokenType type, const char* err_msg)
 {
     if (atEnd() || peek().type != type)
-        throw std::runtime_error(err_msg);
+        throw error(peek(), err_msg);
     else 
         consume();
 }
@@ -105,5 +119,5 @@ bool Parser::match(std::initializer_list<TokenType> types)
 
 bool Parser::atEnd() const
 {
-    return cur_ >= tokens_.size();
+    return cur_ >= tokens_.size() || peek().type == TokenType::Eof;
 }

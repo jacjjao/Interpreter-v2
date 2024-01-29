@@ -4,6 +4,13 @@
 #include "Token/Token.hpp"
 #include <span>
 #include <memory>
+#include <stdexcept>
+
+class ParseError : public std::runtime_error
+{
+public:
+    ParseError(const char* s) : std::runtime_error(s) {}
+};
 
 class Parser
 {
@@ -13,6 +20,8 @@ public:
     std::unique_ptr<Expr> parse();
 
 private:
+    ParseError error(const Token& token, const char* err_msg);
+
     std::unique_ptr<Expr> expression();
     std::unique_ptr<Expr> term();
 	std::unique_ptr<Expr> factor();
@@ -20,7 +29,7 @@ private:
     std::unique_ptr<Expr> primary();
 
     void consume();
-    void consume(TokenType type, const std::string& err_msg);
+    void consume(TokenType type, const char* err_msg);
     Token previous() const;
     Token peek() const;
     bool match(std::initializer_list<TokenType> types);

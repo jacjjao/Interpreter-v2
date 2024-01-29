@@ -79,6 +79,8 @@ std::vector<Token> lexInput(const std::string& input)
 		pushToken(tokens, buf, TokenType::Number);
 	}
 
+	pushToken(tokens, "", TokenType::Eof);
+
 	return tokens;
 }
 
@@ -102,8 +104,6 @@ int main()
 				// expr->printTokenInfo(std::cout) << '\n';
 				std::cout << std::format("{}\n", expr->evaluate());
 			}
-			else
-				std::cout << "Invalid or empty expression!\n";
 		}
 		catch (std::exception& e)
 		{

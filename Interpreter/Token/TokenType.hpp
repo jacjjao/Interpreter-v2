@@ -11,7 +11,8 @@ enum class TokenType
     Div,
     Negative,
     LeftParen,
-    RightParen
+    RightParen,
+    Eof
 };
 
 std::string toString(TokenType type);

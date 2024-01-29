@@ -7,4 +7,5 @@ struct Token
 {
     std::string str;
     TokenType type;
+    int line;
 };
