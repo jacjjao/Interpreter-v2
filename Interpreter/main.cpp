@@ -13,6 +13,7 @@
 #include "Interpreter.hpp"
 #include "ASTPrinter.hpp"
 #include "Lexer.hpp"
+#include "Lox.hpp"
 
 int main()
 {
@@ -33,7 +34,7 @@ int main()
 			if (expr)
 			{
 				ASTPrinter().visit(*expr);
-				std::cout << std::format("{}\n", std::get<double>(*Interpreter().visit(*expr)));
+				Lox::printInterpretResult(Interpreter().visit(*expr));
 			}
 		}
 		catch (const LexError&)

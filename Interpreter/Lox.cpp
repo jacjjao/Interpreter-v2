@@ -18,16 +18,23 @@ void Lox::printInterpretResult(const std::optional<Expr::r_type>& result)
         return;
 
     if (std::holds_alternative<double>(*result))
+    {
         std::cout << std::format("{}\n", std::get<double>(*result));
-    else if (std::holds_alternative<std::string>(*result))
+        return;
+    }
+    if (std::holds_alternative<std::string>(*result))
+    {
         std::cout << std::format("\'{}\'\n", std::get<std::string>(*result));
-    else if (std::holds_alternative<bool>(*result))
+        return;
+    }
+    if (std::holds_alternative<bool>(*result))
     {
         bool b = std::get<bool>(*result);
         if (b)
             std::cout << "true\n";
         else
             std::cout << "false\n";
+        return;
     }
 
     throw std::runtime_error("Fatal internal error, cannot print result.");
