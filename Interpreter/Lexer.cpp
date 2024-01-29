@@ -26,11 +26,11 @@ std::vector<Token> Lexer::lexInput(const std::string& input)
 	while (std::getline(ss, line))
 	{
 		std::string buf;
-		for (size_t i = 0; i < input.size(); ++i)
+		for (size_t i = 0; i < line.size(); ++i)
 		{
-			if (std::isdigit(input[i]) || input[i] == '.')
+			if (std::isdigit(line[i]) || line[i] == '.')
 			{
-				buf.push_back(input[i]);
+				buf.push_back(line[i]);
 				continue;
 			}
 
@@ -40,7 +40,7 @@ std::vector<Token> Lexer::lexInput(const std::string& input)
 				buf.clear();
 			}
 
-			switch (input[i])
+			switch (line[i])
 			{
 			case '+':
 				pushToken(tokens, "+", TokenType::Plus);
@@ -73,7 +73,7 @@ std::vector<Token> Lexer::lexInput(const std::string& input)
 				break;
 
 			default:
-				throw error(line_count, (std::format("Invalid symbol: \'{}\'", input[i])));
+				throw error(line_count, (std::format("Invalid symbol: \'{}\'", line[i])));
 			}
 		}
 
