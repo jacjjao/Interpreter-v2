@@ -2,7 +2,7 @@
      CMAKE_CXX_STANDARD_REQUIRED ON 
      CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable (Interpreter "main.cpp" "Token/TokenType.cpp" "Expr.cpp" "Parser.cpp" "Error.cpp")
+add_executable (Interpreter "main.cpp" "Token/TokenType.cpp" "Expr.cpp" "Parser.cpp" "Error.cpp" "ASTWalker.cpp" "ASTPrinter.cpp" "Lexer.cpp")
 
 target_include_directories (Interpreter
 PRIVATE
