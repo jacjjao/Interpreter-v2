@@ -8,8 +8,7 @@
 
 class ParseError : public std::runtime_error
 {
-public:
-    ParseError(const char* s) : std::runtime_error(s) {}
+    using std::runtime_error::runtime_error;
 };
 
 class Parser

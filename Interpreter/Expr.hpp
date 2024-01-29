@@ -2,72 +2,62 @@
 
 #include "Token/Token.hpp"
 #include <memory>
+#include <any>
+
+class ASTVisitor;
 
 class Expr
 {
 public:
-    virtual double evaluate() const = 0;
     virtual ~Expr() = default;
 
-    virtual std::ostream& printTokenInfo(std::ostream& out) const = 0;
+    virtual std::any accept(ASTVisitor& walker) = 0;
 };
 
 class BinaryExpr : public Expr
 {
 public:
-    BinaryExpr(std::unique_ptr<Expr> lhs, const Token& token, std::unique_ptr<Expr> rhs);
+    BinaryExpr(std::unique_ptr<Expr> leftExpr, const Token& token, std::unique_ptr<Expr> rightExpr);
     ~BinaryExpr() override = default;
 
-    double evaluate() const override;
+    std::any accept(ASTVisitor& walker) override;
 
-    std::ostream& printTokenInfo(std::ostream& out) const override;
-
-private:
-    std::unique_ptr<Expr> lhs_;
-    Token token_;
-    std::unique_ptr<Expr> rhs_;
+    const std::unique_ptr<Expr> lhs;
+    const Token token;
+    const std::unique_ptr<Expr> rhs;
 };
 
 class UnaryExpr : public Expr
 {
 public:
-    UnaryExpr(const Token& token, std::unique_ptr<Expr> rhs);
+    UnaryExpr(const Token& token, std::unique_ptr<Expr> rightExpr);
     ~UnaryExpr() override = default;
 
-    double evaluate() const override;
+    std::any accept(ASTVisitor& walker) override;
 
-    std::ostream& printTokenInfo(std::ostream& out) const override;
-
-private:
-    Token token_;
-    std::unique_ptr<Expr> rhs_;
+    const Token token;
+    const std::unique_ptr<Expr> rhs;
 };
 
 class GroupingExpr : public Expr
 {
 public:
-    GroupingExpr(std::unique_ptr<Expr> expr);
+    GroupingExpr(std::unique_ptr<Expr> op);
     ~GroupingExpr() override = default;
 
-    double evaluate() const override;
+    std::any accept(ASTVisitor& walker) override;
 
-    std::ostream& printTokenInfo(std::ostream& out) const override;
-
-private:
-    std::unique_ptr<Expr> expr_;
+    const std::unique_ptr<Expr> expr;
 };
 
 class NumberExpr : public Expr
 {
 public:
-    NumberExpr(const Token& token);
+    NumberExpr(const Token& op);
     ~NumberExpr() override = default;
 
-    double evaluate() const override;
+    std::any accept(ASTVisitor& walker) override;
 
-    std::ostream& printTokenInfo(std::ostream& out) const override;
-
-private:
-    double value_;
-    Token token_;
+    const double value;
+    const Token token;
 };

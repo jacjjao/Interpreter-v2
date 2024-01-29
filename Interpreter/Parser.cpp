@@ -12,7 +12,7 @@ Parser::Parser(std::span<Token> tokens) :
 
 ParseError Parser::error(const Token& token, const char* err_msg)
 {
-    Lox::error(token, err_msg);
+    Lox::error(token.line, err_msg);
     return ParseError(err_msg);
 }
 
