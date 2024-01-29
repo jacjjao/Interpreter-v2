@@ -10,7 +10,7 @@
 #include "Token/Token.hpp"
 #include "Expr.hpp"
 #include "Parser.hpp"
-#include "ASTWalker.hpp"
+#include "Interpreter.hpp"
 #include "ASTPrinter.hpp"
 #include "Lexer.hpp"
 
@@ -33,10 +33,10 @@ int main()
 			if (expr)
 			{
 				ASTPrinter().visit(*expr);
-				std::cout << std::format("{}\n", std::any_cast<double>(ASTWalker().visit(*expr)));
+				std::cout << std::format("{}\n", std::get<double>(*Interpreter().visit(*expr)));
 			}
 		}
-		catch (const LexError& e)
+		catch (const LexError&)
 		{
 		}
 	} 
