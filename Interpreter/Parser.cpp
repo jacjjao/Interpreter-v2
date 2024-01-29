@@ -2,7 +2,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <iostream>
-#include "Error.hpp"
+#include "Lox.hpp"
 
 Parser::Parser(std::span<Token> tokens) : 
     tokens_(tokens),

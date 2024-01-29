@@ -1,5 +1,5 @@
 #include "Lexer.hpp"
-#include "Error.hpp"
+#include "Lox.hpp"
 #include <format>
 #include <sstream>
 
