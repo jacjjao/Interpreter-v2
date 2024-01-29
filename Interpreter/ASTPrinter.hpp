@@ -1,18 +1,17 @@
 #pragma once
 
 #include "ASTVisitor.hpp"
-#include <any>
 
 class ASTPrinter : public ASTVisitor
 {
 public:
-    virtual std::any visit(Expr& expr) override;
+    virtual std::optional<Expr::r_type> visit(Expr& expr) override;
 
-    virtual std::any visitBinaryExpr(BinaryExpr& expr) override;
+    virtual std::optional<Expr::r_type> visitBinaryExpr(BinaryExpr& expr) override;
 
-    virtual std::any visitUnaryExpr(UnaryExpr& expr) override;
+    virtual std::optional<Expr::r_type> visitUnaryExpr(UnaryExpr& expr) override;
 
-    virtual std::any visitGroupingExpr(GroupingExpr& expr) override;
+    virtual std::optional<Expr::r_type> visitGroupingExpr(GroupingExpr& expr) override;
 
-    virtual std::any visitNumberExpr(NumberExpr& expr) override;
+    virtual std::optional<Expr::r_type> visitNumberExpr(NumberExpr& expr) override;
 };
