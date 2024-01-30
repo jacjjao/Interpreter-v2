@@ -116,8 +116,7 @@ RuntimeError Interpreter::error(const Token& token, const std::string& err_msg)
 
 void Interpreter::checkSameTypeAndNotNull(const Token& token, const Expr::r_type& left, const Expr::r_type& right)
 {
-    constexpr auto null_index = Expr::r_type(std::monostate()).index();
-    if (left.index() == right.index() && left.index() != null_index)
+    if (left.index() == right.index() && !std::holds_alternative<std::monostate>(left))
         return;
     throw error(token, "Operands must be the same type and not null.");
 }
