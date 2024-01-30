@@ -22,6 +22,9 @@ void cmdMode()
 		try
 		{
 			auto tokens = Lexer().lexInput(input);
+			for (const auto& token : tokens)
+				std::cout << std::format("{} ", toString(token.type));
+			std::cout << '\n';
 			Parser parser(tokens);
 			auto expr = parser.parse();
 			if (expr)

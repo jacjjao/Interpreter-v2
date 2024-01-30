@@ -27,6 +27,8 @@ std::string toString(TokenType type)
         return "Bool";
     case TokenType::Bang:
         return "Bang";
+    case TokenType::Eoe:
+        return "Eoe";
     default:
         throw std::invalid_argument{ "Invalid token type" };
     }

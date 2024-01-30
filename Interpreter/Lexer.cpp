@@ -28,6 +28,15 @@ std::string Lexer::getWord(const std::string_view input, const size_t offset, co
 
 std::vector<Token> Lexer::lexInput(const std::string_view input)
 {
+	const auto isOperatorType = [](TokenType type) -> bool {
+		return type == TokenType::Bang ||
+			type == TokenType::Div ||
+			type == TokenType::Minus ||
+			type == TokenType::Mul ||
+			type == TokenType::LeftParen ||
+			type == TokenType::Plus;
+	};
+
 	std::vector<Token> tokens;
 	std::string buf;
 	for (size_t i = 0; i < input.size(); ++i)
@@ -67,7 +76,7 @@ std::vector<Token> Lexer::lexInput(const std::string_view input)
 			break;
 
 		case '-':
-			if (tokens.empty() || (tokens.back().type != TokenType::Number && tokens.back().type != TokenType::String))
+			if (tokens.empty() || isOperatorType(tokens.back().type))
 				pushToken(tokens, "-", TokenType::Negative);
 			else
 				pushToken(tokens, "-", TokenType::Minus);
