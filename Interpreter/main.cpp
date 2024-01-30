@@ -34,7 +34,7 @@ int main()
 			if (expr)
 			{
 				ASTPrinter().visit(*expr);
-				Lox::printInterpretResult(Interpreter().visit(*expr));
+				Lox::printInterpretResult(Interpreter().interpret(*expr));
 			}
 		}
 		catch (const LexError&)

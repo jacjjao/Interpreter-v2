@@ -46,3 +46,18 @@ std::optional<Expr::r_type> GroupingExpr::accept(ASTVisitor& visitor)
 {
     return visitor.visitGroupingExpr(*this);
 }
+
+StringExpr::StringExpr(const Token& op) : 
+    token(op)
+{
+}
+
+std::optional<Expr::r_type> StringExpr::accept(ASTVisitor& visitor)
+{
+    return visitor.visitStringExpr(*this);
+}
+
+const std::string& StringExpr::str() const
+{
+    return token.str;
+}

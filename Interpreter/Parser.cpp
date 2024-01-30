@@ -72,6 +72,8 @@ std::unique_ptr<Expr> Parser::primary()
 {
     if (match({ TokenType::Number }))
         return std::unique_ptr<Expr>(new NumberExpr(previous()));
+    if (match({ TokenType::String }))
+        return std::unique_ptr<Expr>(new StringExpr(previous()));
     if (match({ TokenType::LeftParen }))
     {
         auto expr = expression();

@@ -12,6 +12,19 @@ void Lox::error(const int line, const char* err_msg)
     report(line, err_msg);
 }
 
+void Lox::runtimeError(int line, const char* err_msg)
+{
+    std::cerr << std::format("[line {}] Runtime error: {}\n", line, err_msg);
+    runtime_err = true;
+}
+
+bool Lox::hadRuntimeErr()
+{
+    bool v = runtime_err;
+    runtime_err = false;
+    return v;
+}
+
 void Lox::printInterpretResult(const std::optional<Expr::r_type>& result)
 {
     if (!result)

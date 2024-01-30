@@ -35,3 +35,9 @@ std::optional<Expr::r_type> ASTPrinter::visitNumberExpr(NumberExpr& expr)
     std::cout << std::format("Token Type: {}  str: {}\n", toString(expr.token.type), expr.token.str);
     return std::nullopt;
 }
+
+std::optional<Expr::r_type> ASTPrinter::visitStringExpr(StringExpr& expr)
+{
+    std::cout << std::format("Token Type: {}  str: {}\n", toString(expr.token.type), expr.token.str);
+    return std::nullopt;
+}

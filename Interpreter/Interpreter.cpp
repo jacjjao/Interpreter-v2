@@ -1,4 +1,5 @@
 #include "Interpreter.hpp"
+#include "Lox.hpp"
 #include <format>
 
 std::optional<Expr::r_type> Interpreter::interpret(Expr& expr)
@@ -9,7 +10,7 @@ std::optional<Expr::r_type> Interpreter::interpret(Expr& expr)
     }
     catch (const RuntimeError& e)
     {
-        // TODO
+        return std::nullopt;
     }
 }
 
@@ -43,7 +44,7 @@ std::optional<Expr::r_type> Interpreter::visitBinaryExpr(BinaryExpr& expr)
         checkNumberOperand(expr.token, lhs, rhs);
         return std::get<double>(*lhs) / std::get<double>(*rhs);
     }
-    throw RuntimeError(expr.token, std::format("Invalid token type: {} for binary expression.", toString(expr.token.type)).c_str());
+    throw error(expr.token, std::format("Invalid token: {} for binary expression.", toString(expr.token.type)).c_str());
 }
 
 std::optional<Expr::r_type> Interpreter::visitUnaryExpr(UnaryExpr& expr)
@@ -55,7 +56,7 @@ std::optional<Expr::r_type> Interpreter::visitUnaryExpr(UnaryExpr& expr)
         checkNumberOperand(expr.token, v);
         return -std::get<double>(*v);
     }
-    throw RuntimeError(expr.token, std::format("Invalid token type: {} for unary expression.", toString(expr.token.type)).c_str());
+    throw error(expr.token, std::format("Invalid token: {} for unary expression.", toString(expr.token.type)).c_str());
 }
 
 std::optional<Expr::r_type> Interpreter::visitGroupingExpr(GroupingExpr& expr)
@@ -68,18 +69,29 @@ std::optional<Expr::r_type> Interpreter::visitNumberExpr(NumberExpr& expr)
     return expr.value;
 }
 
+std::optional<Expr::r_type> Interpreter::visitStringExpr(StringExpr& expr)
+{
+    return expr.str();
+}
+
+RuntimeError Interpreter::error(const Token& token, const std::string& err_msg)
+{
+    Lox::runtimeError(token.line, err_msg.c_str());
+    return RuntimeError(token, err_msg.c_str());
+}
+
 void Interpreter::checkNumberOperand(const Token& token, const std::optional<Expr::r_type>& operand)
 {
     if (operand && std::holds_alternative<double>(*operand))
         return;
-    throw RuntimeError(token, "Operand must be a number.");
+    throw error(token, "Operand must be a number.");
 }
 
 void Interpreter::checkNumberOperand(const Token& token, const std::optional<Expr::r_type>& left, const std::optional<Expr::r_type>& right)
 {
     if (left && std::holds_alternative<double>(*left) && right && std::holds_alternative<double>(*right))
         return;
-    throw RuntimeError(token, "Operands must be numbers.");
+    throw error(token, "Operands must be numbers.");
 }
 
 void Interpreter::checkNumberOrStringOperand(const Token& token, const std::optional<Expr::r_type>& left, const std::optional<Expr::r_type>& right)
@@ -91,7 +103,7 @@ void Interpreter::checkNumberOrStringOperand(const Token& token, const std::opti
         if (std::holds_alternative<std::string>(*left) && std::holds_alternative<std::string>(*right))
             return;
     }
-    throw RuntimeError(token, "Operands must be numbers.");
+    throw error(token, "Operands must be numbers.");
 }
 
 RuntimeError::RuntimeError(Token token, const char* err_msg) :

@@ -14,7 +14,7 @@ public:
 
     virtual ~Expr() = default;
 
-    virtual std::optional<r_type> accept(ASTVisitor& walker) = 0;
+    virtual std::optional<r_type> accept(ASTVisitor& visitor) = 0;
 };
 
 class BinaryExpr : public Expr
@@ -23,7 +23,7 @@ public:
     BinaryExpr(std::unique_ptr<Expr> leftExpr, const Token& token, std::unique_ptr<Expr> rightExpr);
     ~BinaryExpr() override = default;
 
-    std::optional<Expr::r_type> accept(ASTVisitor& walker) override;
+    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
 
     const std::unique_ptr<Expr> lhs;
     const Token token;
@@ -36,7 +36,7 @@ public:
     UnaryExpr(const Token& token, std::unique_ptr<Expr> rightExpr);
     ~UnaryExpr() override = default;
 
-    std::optional<Expr::r_type> accept(ASTVisitor& walker) override;
+    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
 
     const Token token;
     const std::unique_ptr<Expr> rhs;
@@ -48,7 +48,7 @@ public:
     GroupingExpr(std::unique_ptr<Expr> op);
     ~GroupingExpr() override = default;
 
-    std::optional<Expr::r_type> accept(ASTVisitor& walker) override;
+    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
 
     const std::unique_ptr<Expr> expr;
 };
@@ -59,8 +59,21 @@ public:
     NumberExpr(const Token& op);
     ~NumberExpr() override = default;
 
-    std::optional<Expr::r_type> accept(ASTVisitor& walker) override;
+    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
 
     const double value;
+    const Token token;
+};
+
+class StringExpr : public Expr
+{
+public:
+    StringExpr(const Token& op);
+    ~StringExpr() override = default;
+
+    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
+
+    const std::string& str() const;
+
     const Token token;
 };

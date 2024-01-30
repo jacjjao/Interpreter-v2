@@ -72,6 +72,18 @@ std::vector<Token> Lexer::lexInput(const std::string& input)
 			case ' ': case '\r': case '\n':
 				break;
 
+			case '\"':
+			{
+				++i;
+				auto quote = std::find(line.cbegin() + i, line.cend(), '\"');
+				if (quote == line.cend())
+					throw error(line_count, "Expect character '\"'");
+				std::string str(line.cbegin() + i, quote);
+				i += str.size();
+				pushToken(tokens, std::move(str), TokenType::String);
+				break;
+			}
+
 			default:
 				throw error(line_count, (std::format("Invalid symbol: \'{}\'", line[i])));
 			}

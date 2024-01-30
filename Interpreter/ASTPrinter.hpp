@@ -14,4 +14,6 @@ public:
     virtual std::optional<Expr::r_type> visitGroupingExpr(GroupingExpr& expr) override;
 
     virtual std::optional<Expr::r_type> visitNumberExpr(NumberExpr& expr) override;
+
+    virtual std::optional<Expr::r_type> visitStringExpr(StringExpr& expr) override;
 };
