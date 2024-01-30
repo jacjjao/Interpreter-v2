@@ -34,6 +34,6 @@ private:
     bool match(std::initializer_list<TokenType> types);
     bool atEnd() const;
 
-    std::span<Token> tokens_;
+    const std::span<Token> tokens_;
     size_t cur_;
 };

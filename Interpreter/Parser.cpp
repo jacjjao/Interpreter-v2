@@ -28,7 +28,10 @@ std::unique_ptr<Expr> Parser::parse()
 
 std::unique_ptr<Expr> Parser::expression()
 {
-    return term();
+    auto expr = term();
+    if (!atEnd())
+        throw error(peek(), "Expect expression.");
+    return expr;
 }
 
 std::unique_ptr<Expr> Parser::term()

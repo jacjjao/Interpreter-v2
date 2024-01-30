@@ -19,14 +19,35 @@ LexError Lexer::error(const int line, const std::string& err_msg)
 
 std::string Lexer::getWord(const std::string_view input, const size_t offset, const char sep)
 {
-	size_t i = offset + 1;
-	assert(i <= input.size());
-	for (; i < input.size() && input[i] != sep; ++i)
-		;
-	return std::string(input.begin() + offset, input.begin() + i);
+	auto pos = input.find_first_of(sep, offset);
+	assert(pos != std::string_view::npos);
+	return std::string(input.begin() + offset, input.begin() + pos);
 }
 
-std::vector<Token> Lexer::lexInput(const std::string_view input)
+Lexer::Lexer(std::string input) :
+	input_(std::move(input)),
+	line_count_(1)
+{
+}
+
+std::vector<Token> Lexer::genTokens()
+{
+	std::vector<Token> tokens;
+	line_count_ = 1;
+	constexpr auto delimiter = toChar(TokenType::Eoe);
+	static_assert(delimiter.has_value());
+	for (const auto& exp : input_ | std::views::split(*delimiter))
+	{
+		lexInput(tokens, std::string_view(exp.begin(), exp.end()));
+		if constexpr (*delimiter == '\n')
+		{
+			++line_count_;
+		}
+	}
+	return tokens;
+}
+
+void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 {
 	const auto isOperatorType = [](TokenType type) -> bool {
 		return type == TokenType::Bang ||
@@ -37,13 +58,12 @@ std::vector<Token> Lexer::lexInput(const std::string_view input)
 			type == TokenType::Plus;
 	};
 
-	std::vector<Token> tokens;
 	std::string buf;
-	for (size_t i = 0; i < input.size(); ++i)
+	for (size_t i = 0; i < exp.size(); ++i)
 	{
-		if (std::isdigit(input[i]) || input[i] == '.')
+		if (std::isdigit(exp[i]) || exp[i] == '.')
 		{
-			buf.push_back(input[i]);
+			buf.push_back(exp[i]);
 			continue;
 		}
 
@@ -53,11 +73,11 @@ std::vector<Token> Lexer::lexInput(const std::string_view input)
 			buf.clear();
 		}
 
-		switch (input[i])
+		switch (exp[i])
 		{
 		case 't': case 'f':
 		{
-			const auto word = getWord(input, i);
+			const auto word = getWord(exp, i);
 			const auto it = s_key_words.find(word);
 			if (it != s_key_words.end())
 			{
@@ -107,19 +127,19 @@ std::vector<Token> Lexer::lexInput(const std::string_view input)
 
 		case '\"': case '\'':
 		{
-			char c = input[i];
+			char c = exp[i];
 			++i;
-			auto quote = std::find(input.begin() + i, input.end(), c);
-			if (quote == input.end())
+			auto quote = std::find(exp.begin() + i, exp.end(), c);
+			if (quote == exp.end())
 				throw error(line_count_, std::format("Expect character '{}'", c));
-			std::string str(input.begin() + i, quote);
+			std::string str(exp.begin() + i, quote);
 			i += str.size();
 			pushToken(tokens, std::move(str), TokenType::String);
 			break;
 		}
 
 		default:
-			throw error(line_count_, (std::format("Invalid symbol: \'{}\'", input[i])));
+			throw error(line_count_, (std::format("Invalid symbol: \'{}\'", exp[i])));
 		}
 	}
 
@@ -127,7 +147,4 @@ std::vector<Token> Lexer::lexInput(const std::string_view input)
 		pushToken(tokens, buf, TokenType::Number);
 
 	pushToken(tokens, "", TokenType::Eoe);
-	++line_count_;
-
-	return tokens;
 }

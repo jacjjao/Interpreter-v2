@@ -11,9 +11,9 @@
 void cmdMode()
 {
 	std::cout << "Type \"exit\" to exit the program.\n";
-	std::string input;
 	while (true)
 	{
+		std::string input;
 		std::cout << ">> ";
 		std::getline(std::cin, input);
 		if (input == "exit")
@@ -21,7 +21,7 @@ void cmdMode()
 
 		try
 		{
-			auto tokens = Lexer().lexInput(input);
+			auto tokens = Lexer(std::move(input)).genTokens();
 			for (const auto& token : tokens)
 				std::cout << std::format("{} ", toString(token.type));
 			std::cout << '\n';
@@ -49,28 +49,25 @@ void fileMode(const std::filesystem::path& path)
 		file.open(path);
 		std::stringstream ss;
 		ss << file.rdbuf();
-		const std::string input = std::move(ss).str();
-		Lexer lexer;
-		for (const auto& exp : input | std::views::split(toChar(TokenType::Eoe)))
+		Lexer lexer(std::move(ss).str());
+		auto tokens = lexer.genTokens();
+		auto expr_begin = tokens.begin();
+		while (expr_begin != tokens.end())
 		{
-			auto tokens = lexer.lexInput(std::string_view(exp.begin(), exp.end()));
-			auto expr_begin = tokens.begin();
-			while (expr_begin != tokens.end())
+			auto expr_end = std::find_if(expr_begin + 1, tokens.end(), [](const Token& t) -> bool { return t.type == TokenType::Eoe; });
+			if (expr_end == tokens.end())
+				return;
+			++expr_end; // Inorder to include the Eof token
+			Parser parser(std::span(expr_begin, expr_end));
+			auto expr = parser.parse();
+			if (expr)
 			{
-				auto expr_end = std::find_if(expr_begin + 1, tokens.end(), [](const Token& t) -> bool { return t.type == TokenType::Eoe; });
-				if (expr_end == tokens.end())
+				ASTPrinter().print(*expr);
+				Lox::printInterpretResult(Interpreter().interpret(*expr));
+				if (Lox::hadRuntimeErr())
 					return;
-				Parser parser(std::span(expr_begin, expr_end));
-				auto expr = parser.parse();
-				if (expr)
-				{
-					ASTPrinter().print(*expr);
-					Lox::printInterpretResult(Interpreter().interpret(*expr));
-					if (Lox::hadRuntimeErr())
-						return;
-				}
-				expr_begin = expr_end + 1;
 			}
+			expr_begin = expr_end;
 		}
 	}
 	catch (const LexError&)

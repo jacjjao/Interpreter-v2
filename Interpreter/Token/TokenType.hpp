@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <optional>
 
 enum class TokenType
 {
@@ -20,12 +21,12 @@ enum class TokenType
 
 std::string toString(TokenType type);
 
-constexpr char toChar(TokenType type)
+constexpr std::optional<char> toChar(TokenType type)
 {
     switch (type)
     {
     case TokenType::Eoe:
         return '\n';
     }
-    throw std::invalid_argument(std::format("Cannot map {} to char", toString(type)));
+    return std::nullopt;
 }
