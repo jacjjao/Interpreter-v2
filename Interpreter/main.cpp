@@ -1,14 +1,4 @@
-﻿#include <iostream>
-#include <string>
-#include <vector>
-#include <cctype>
-#include <span>
-#include <cassert>
-#include <format>
-#include <filesystem>
-#include <fstream>
-#include <ranges>
-
+﻿#include "pch.hpp"
 #include "Token/TokenType.hpp"
 #include "Token/Token.hpp"
 #include "Expr.hpp"
@@ -58,7 +48,7 @@ void fileMode(const std::filesystem::path& path)
 		ss << file.rdbuf();
 		const std::string input = std::move(ss).str();
 		Lexer lexer;
-		for (const auto& exp : input | std::views::split(static_cast<char>(TokenType::Eoe)))
+		for (const auto& exp : input | std::views::split(toChar(TokenType::Eoe)))
 		{
 			auto tokens = lexer.lexInput(std::string_view(exp.begin(), exp.end()));
 			auto expr_begin = tokens.begin();

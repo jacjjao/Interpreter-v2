@@ -1,8 +1,6 @@
+#include "pch.hpp"
 #include "Expr.hpp"
 #include "ASTVisitor.hpp"
-#include <stdexcept>
-#include <sstream>
-#include <iostream>
 
 BinaryExpr::BinaryExpr(std::unique_ptr<Expr> leftExpr, const Token& op, std::unique_ptr<Expr> rightExpr) :
     lhs(std::move(leftExpr)),
@@ -60,4 +58,15 @@ std::optional<Expr::r_type> StringExpr::accept(ASTVisitor& visitor)
 const std::string& StringExpr::str() const
 {
     return token.str;
+}
+
+BoolExpr::BoolExpr(const Token& op) : 
+    token(op),
+    value(op.str == "true")
+{
+}
+
+std::optional<Expr::r_type> BoolExpr::accept(ASTVisitor& visitor)
+{
+    return visitor.visitBoolExpr(*this);
 }

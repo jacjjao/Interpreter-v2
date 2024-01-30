@@ -18,4 +18,6 @@ public:
     virtual std::optional<Expr::r_type> visitNumberExpr(NumberExpr& expr) = 0;
 
     virtual std::optional<Expr::r_type> visitStringExpr(StringExpr& expr) = 0;
+
+    virtual std::optional<Expr::r_type> visitBoolExpr(BoolExpr& expr) = 0;
 };

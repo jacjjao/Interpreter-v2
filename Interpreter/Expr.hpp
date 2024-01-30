@@ -77,3 +77,15 @@ public:
 
     const Token token;
 };
+
+class BoolExpr : public Expr
+{
+public:
+    BoolExpr(const Token& op);
+    ~BoolExpr() override = default;
+
+    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
+
+    const bool value;
+    const Token token;
+};

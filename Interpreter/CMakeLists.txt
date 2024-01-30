@@ -4,6 +4,11 @@
 
 add_executable (Interpreter "main.cpp" "Token/TokenType.cpp" "Expr.cpp" "Parser.cpp" "Lox.cpp" "Interpreter.cpp" "ASTPrinter.cpp" "Lexer.cpp")
 
+target_precompile_headers(${PROJECT_NAME}
+	PRIVATE
+		pch.hpp
+)
+
 target_include_directories (Interpreter
 PRIVATE
     ${CMAKE_SOURCE_DIR}/Interpreter

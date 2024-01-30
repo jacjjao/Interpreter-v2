@@ -2,8 +2,9 @@
 
 #include <string>
 
-enum class TokenType : char
+enum class TokenType
 {
+    Eoe,
     Number,
     Plus,
     Minus,
@@ -13,7 +14,18 @@ enum class TokenType : char
     LeftParen,
     RightParen,
     String,
-    Eoe = '\n'
+    Bool,
+    Bang
 };
 
 std::string toString(TokenType type);
+
+constexpr char toChar(TokenType type)
+{
+    switch (type)
+    {
+    case TokenType::Eoe:
+        return '\n';
+    }
+    throw std::invalid_argument(std::format("Cannot map {} to char", toString(type)));
+}

@@ -1,7 +1,5 @@
+#include "pch.hpp"
 #include "Parser.hpp"
-#include <cassert>
-#include <stdexcept>
-#include <iostream>
 #include "Lox.hpp"
 
 Parser::Parser(std::span<Token> tokens) : 
@@ -59,7 +57,7 @@ std::unique_ptr<Expr> Parser::factor()
 
 std::unique_ptr<Expr> Parser::unary()
 {
-    while (match({ TokenType::Negative }))
+    while (match({ TokenType::Negative, TokenType::Bang }))
     {
         auto op = previous();
         auto rhs = unary();
@@ -74,6 +72,8 @@ std::unique_ptr<Expr> Parser::primary()
         return std::unique_ptr<Expr>(new NumberExpr(previous()));
     if (match({ TokenType::String }))
         return std::unique_ptr<Expr>(new StringExpr(previous()));
+    if (match({ TokenType::Bool }))
+        return std::unique_ptr<Expr>(new BoolExpr(previous()));
     if (match({ TokenType::LeftParen }))
     {
         auto expr = expression();

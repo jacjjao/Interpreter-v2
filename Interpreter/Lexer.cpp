@@ -1,6 +1,6 @@
+#include "pch.hpp"
 #include "Lexer.hpp"
 #include "Lox.hpp"
-#include <format>
 
 void Lexer::pushToken(std::vector<Token>& tokens, std::string str, const TokenType type)
 {
@@ -17,7 +17,16 @@ LexError Lexer::error(const int line, const std::string& err_msg)
 	return LexError(err_msg);
 }
 
-std::vector<Token> Lexer::lexInput(std::string_view input)
+std::string Lexer::getWord(const std::string_view input, const size_t offset, const char sep)
+{
+	size_t i = offset + 1;
+	assert(i <= input.size());
+	for (; i < input.size() && input[i] != sep; ++i)
+		;
+	return std::string(input.begin() + offset, input.begin() + i);
+}
+
+std::vector<Token> Lexer::lexInput(const std::string_view input)
 {
 	std::vector<Token> tokens;
 	std::string buf;
@@ -37,6 +46,22 @@ std::vector<Token> Lexer::lexInput(std::string_view input)
 
 		switch (input[i])
 		{
+		case 't': case 'f':
+		{
+			const auto word = getWord(input, i);
+			const auto it = s_key_words.find(word);
+			if (it != s_key_words.end())
+			{
+				i += word.size();
+				pushToken(tokens, word, it->second);
+			}
+			break;
+		}
+
+		case '!':
+			pushToken(tokens, "!", TokenType::Bang);
+			break;
+
 		case '+':
 			pushToken(tokens, "+", TokenType::Plus);
 			break;

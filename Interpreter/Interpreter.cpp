@@ -1,6 +1,6 @@
+#include "pch.hpp"
 #include "Interpreter.hpp"
 #include "Lox.hpp"
-#include <format>
 
 std::optional<Expr::r_type> Interpreter::interpret(Expr& expr)
 {
@@ -55,6 +55,9 @@ std::optional<Expr::r_type> Interpreter::visitUnaryExpr(UnaryExpr& expr)
     case TokenType::Negative:
         checkNumberOperand(expr.token, v);
         return -std::get<double>(*v);
+    case TokenType::Bang:
+        checkBoolOperand(expr.token, v);
+        return !std::get<bool>(*v);
     }
     throw error(expr.token, std::format("Invalid token: {} for unary expression.", toString(expr.token.type)).c_str());
 }
@@ -74,10 +77,22 @@ std::optional<Expr::r_type> Interpreter::visitStringExpr(StringExpr& expr)
     return expr.str();
 }
 
+std::optional<Expr::r_type> Interpreter::visitBoolExpr(BoolExpr& expr)
+{
+    return expr.value;
+}
+
 RuntimeError Interpreter::error(const Token& token, const std::string& err_msg)
 {
     Lox::runtimeError(token.line, err_msg.c_str());
     return RuntimeError(token, err_msg.c_str());
+}
+
+void Interpreter::checkBoolOperand(const Token& token, const std::optional<Expr::r_type>& operand)
+{
+    if (operand && std::holds_alternative<bool>(*operand))
+        return;
+    throw error(token, "Operand must be a boolean.");
 }
 
 void Interpreter::checkNumberOperand(const Token& token, const std::optional<Expr::r_type>& operand)

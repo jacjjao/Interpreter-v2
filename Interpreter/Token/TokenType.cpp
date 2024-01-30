@@ -1,5 +1,5 @@
+#include "pch.hpp"
 #include "TokenType.hpp"
-#include <stdexcept>
 
 std::string toString(TokenType type)
 { 
@@ -23,6 +23,10 @@ std::string toString(TokenType type)
         return "RightParen";
     case TokenType::String:
         return "String";
+    case TokenType::Bool:
+        return "Bool";
+    case TokenType::Bang:
+        return "Bang";
     default:
         throw std::invalid_argument{ "Invalid token type" };
     }
