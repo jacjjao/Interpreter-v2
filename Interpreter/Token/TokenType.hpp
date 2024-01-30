@@ -2,7 +2,7 @@
 
 #include <string>
 
-enum class TokenType
+enum class TokenType : char
 {
     Number,
     Plus,
@@ -13,7 +13,7 @@ enum class TokenType
     LeftParen,
     RightParen,
     String,
-    Eof
+    Eoe = '\n'
 };
 
 std::string toString(TokenType type);

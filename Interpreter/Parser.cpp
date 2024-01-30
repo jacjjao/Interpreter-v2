@@ -121,5 +121,5 @@ bool Parser::match(std::initializer_list<TokenType> types)
 
 bool Parser::atEnd() const
 {
-    return cur_ >= tokens_.size() || peek().type == TokenType::Eof;
+    return cur_ >= tokens_.size() || peek().type == TokenType::Eoe;
 }

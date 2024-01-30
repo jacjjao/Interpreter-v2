@@ -5,6 +5,8 @@
 class ASTPrinter : public ASTVisitor
 {
 public:
+    void print(Expr& expr);
+
     virtual std::optional<Expr::r_type> visit(Expr& expr) override;
 
     virtual std::optional<Expr::r_type> visitBinaryExpr(BinaryExpr& expr) override;

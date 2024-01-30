@@ -2,6 +2,11 @@
 #include <iostream>
 #include <format>
 
+void ASTPrinter::print(Expr& expr)
+{
+    visit(expr);
+}
+
 std::optional<Expr::r_type> ASTPrinter::visit(Expr& expr)
 {
     return expr.accept(*this);
