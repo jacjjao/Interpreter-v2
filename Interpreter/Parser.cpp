@@ -23,7 +23,7 @@ std::unique_ptr<Expr> Parser::parse()
             throw error(peek(), "Expect expression.");
         return expr;
     }
-    catch (const ParseError& e)
+    catch (const ParseError&)
     {
         return nullptr;
     }
@@ -101,6 +101,8 @@ std::unique_ptr<Expr> Parser::primary()
         return std::unique_ptr<Expr>(new StringExpr(previous()));
     if (match({ TokenType::Bool }))
         return std::unique_ptr<Expr>(new BoolExpr(previous()));
+    if (match({ TokenType::Null }))
+        return std::unique_ptr<Expr>(new NullExpr(previous()));
     if (match({ TokenType::LeftParen }))
     {
         auto expr = expression();

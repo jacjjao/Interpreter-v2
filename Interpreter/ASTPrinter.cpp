@@ -6,48 +6,54 @@ void ASTPrinter::print(Expr& expr)
     visit(expr);
 }
 
-std::optional<Expr::r_type> ASTPrinter::visit(Expr& expr)
+Expr::r_type ASTPrinter::visit(Expr& expr)
 {
     return expr.accept(*this);
 }
 
-std::optional<Expr::r_type> ASTPrinter::visitBinaryExpr(BinaryExpr& expr)
+Expr::r_type ASTPrinter::visitBinaryExpr(BinaryExpr& expr)
 {
     if (expr.lhs)
         visit(*expr.lhs);
     std::cout << std::format("Token Type: {}  str: {}\n", toString(expr.token.type), expr.token.str);
     if (expr.rhs)
         visit(*expr.rhs);
-    return std::nullopt;
+    return {};
 }
 
-std::optional<Expr::r_type> ASTPrinter::visitUnaryExpr(UnaryExpr& expr)
+Expr::r_type ASTPrinter::visitUnaryExpr(UnaryExpr& expr)
 {
     std::cout << std::format("Token Type: {}  str: {}\n", toString(expr.token.type), expr.token.str);
     if (expr.rhs)
         visit(*expr.rhs);
-    return std::nullopt;
+    return {};
 }
 
-std::optional<Expr::r_type> ASTPrinter::visitGroupingExpr(GroupingExpr& expr)
+Expr::r_type ASTPrinter::visitGroupingExpr(GroupingExpr& expr)
 {
     return visit(*expr.expr);
 }
 
-std::optional<Expr::r_type> ASTPrinter::visitNumberExpr(NumberExpr& expr)
+Expr::r_type ASTPrinter::visitNumberExpr(NumberExpr& expr)
 {
     std::cout << std::format("Token Type: {}  str: {}\n", toString(expr.token.type), expr.token.str);
-    return std::nullopt;
+    return {};
 }
 
-std::optional<Expr::r_type> ASTPrinter::visitStringExpr(StringExpr& expr)
+Expr::r_type ASTPrinter::visitStringExpr(StringExpr& expr)
 {
     std::cout << std::format("Token Type: {}  str: {}\n", toString(expr.token.type), expr.token.str);
-    return std::nullopt;
+    return {};
 }
 
-std::optional<Expr::r_type> ASTPrinter::visitBoolExpr(BoolExpr& expr)
+Expr::r_type ASTPrinter::visitBoolExpr(BoolExpr& expr)
 {
     std::cout << std::format("Token Type: {}  str: {}\n", toString(expr.token.type), expr.token.str);
-    return std::nullopt;
+    return {};
+}
+
+Expr::r_type ASTPrinter::visitNullExpr(NullExpr& expr)
+{
+    std::cout << std::format("Token Type: {}  str: {}\n", toString(expr.token.type), expr.token.str);
+    return {};
 }

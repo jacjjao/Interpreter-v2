@@ -10,11 +10,11 @@ class ASTVisitor;
 class Expr
 {
 public:
-    using r_type = std::variant<bool, double, std::string>;
+    using r_type = std::variant<std::monostate, bool, double, std::string>;
 
     virtual ~Expr() = default;
 
-    virtual std::optional<r_type> accept(ASTVisitor& visitor) = 0;
+    virtual r_type accept(ASTVisitor& visitor) = 0;
 };
 
 class BinaryExpr : public Expr
@@ -23,7 +23,7 @@ public:
     BinaryExpr(std::unique_ptr<Expr> leftExpr, const Token& token, std::unique_ptr<Expr> rightExpr);
     ~BinaryExpr() override = default;
 
-    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
+    Expr::r_type accept(ASTVisitor& visitor) override;
 
     const std::unique_ptr<Expr> lhs;
     const Token token;
@@ -36,7 +36,7 @@ public:
     UnaryExpr(const Token& token, std::unique_ptr<Expr> rightExpr);
     ~UnaryExpr() override = default;
 
-    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
+    Expr::r_type accept(ASTVisitor& visitor) override;
 
     const Token token;
     const std::unique_ptr<Expr> rhs;
@@ -48,7 +48,7 @@ public:
     GroupingExpr(std::unique_ptr<Expr> op);
     ~GroupingExpr() override = default;
 
-    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
+    Expr::r_type accept(ASTVisitor& visitor) override;
 
     const std::unique_ptr<Expr> expr;
 };
@@ -59,7 +59,7 @@ public:
     NumberExpr(const Token& op);
     ~NumberExpr() override = default;
 
-    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
+    Expr::r_type accept(ASTVisitor& visitor) override;
 
     const double value;
     const Token token;
@@ -71,7 +71,7 @@ public:
     StringExpr(const Token& op);
     ~StringExpr() override = default;
 
-    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
+    Expr::r_type accept(ASTVisitor& visitor) override;
 
     const std::string& str() const;
 
@@ -84,8 +84,21 @@ public:
     BoolExpr(const Token& op);
     ~BoolExpr() override = default;
 
-    std::optional<Expr::r_type> accept(ASTVisitor& visitor) override;
+    Expr::r_type accept(ASTVisitor& visitor) override;
 
     const bool value;
+    const Token token;
+};
+
+class NullExpr : public Expr
+{
+public:
+    NullExpr(const Token& op);
+    ~NullExpr() override = default;
+
+    Expr::r_type accept(ASTVisitor& visitor) override;
+
+    std::monostate value() const;
+    
     const Token token;
 };

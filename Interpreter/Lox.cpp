@@ -24,24 +24,26 @@ bool Lox::hadRuntimeErr()
     return v;
 }
 
-void Lox::printInterpretResult(const std::optional<Expr::r_type>& result)
+void Lox::printInterpretResult(const Expr::r_type& result)
 {
-    if (!result)
-        return;
-
-    if (std::holds_alternative<double>(*result))
+    if (std::holds_alternative<std::monostate>(result))
     {
-        std::cout << std::format("{}\n", std::get<double>(*result));
+        std::cout << "null\n";
         return;
     }
-    if (std::holds_alternative<std::string>(*result))
+    if (std::holds_alternative<double>(result))
     {
-        std::cout << std::format("\'{}\'\n", std::get<std::string>(*result));
+        std::cout << std::format("{}\n", std::get<double>(result));
         return;
     }
-    if (std::holds_alternative<bool>(*result))
+    if (std::holds_alternative<std::string>(result))
     {
-        bool b = std::get<bool>(*result);
+        std::cout << std::format("\'{}\'\n", std::get<std::string>(result));
+        return;
+    }
+    if (std::holds_alternative<bool>(result))
+    {
+        bool b = std::get<bool>(result);
         if (b)
             std::cout << "true\n";
         else

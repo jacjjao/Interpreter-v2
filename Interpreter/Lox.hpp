@@ -14,7 +14,7 @@ public:
 
     static bool hadRuntimeErr();
 
-    static void printInterpretResult(const std::optional<Expr::r_type>& result);
+    static void printInterpretResult(const Expr::r_type& result);
 
 private:
     inline static bool runtime_err = false;

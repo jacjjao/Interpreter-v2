@@ -30,7 +30,7 @@ void cmdMode()
 			if (expr)
 			{
 				ASTPrinter().print(*expr);
-				Lox::printInterpretResult(Interpreter().interpret(*expr));
+				Interpreter().interpret(*expr);
 			}
 		}
 		catch (const LexError&)
@@ -63,7 +63,7 @@ void fileMode(const std::filesystem::path& path)
 			if (expr)
 			{
 				ASTPrinter().print(*expr);
-				Lox::printInterpretResult(Interpreter().interpret(*expr));
+				Interpreter().interpret(*expr);
 				if (Lox::hadRuntimeErr())
 					return;
 			}

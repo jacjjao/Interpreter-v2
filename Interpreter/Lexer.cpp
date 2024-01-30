@@ -17,10 +17,10 @@ LexError Lexer::error(const int line, const std::string& err_msg)
 	return LexError(err_msg);
 }
 
-std::string Lexer::getWord(const std::string_view input, const size_t offset, const char sep)
+std::string Lexer::getWord(const std::string_view input, const size_t offset)
 {
 	size_t i = offset + 1;
-	while (i < input.size() && input[i] != sep)
+	while (i < input.size() && std::isalpha(input[i]))
 		++i;
 	return std::string(input.begin() + offset, input.begin() + i);
 }
@@ -63,7 +63,13 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 			type == TokenType::Minus ||
 			type == TokenType::Mul ||
 			type == TokenType::LeftParen ||
-			type == TokenType::Plus;
+			type == TokenType::Plus || 
+			type == TokenType::Equal || 
+			type == TokenType::GreaterEq || 
+			type == TokenType::LessEq || 
+			type == TokenType::NotEqual || 
+			type == TokenType::Greater || 
+			type == TokenType::Less;
 	};
 
 	std::string buf;
@@ -83,13 +89,13 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 
 		switch (exp[i])
 		{
-		case 't': case 'f':
+		case 't': case 'f': case 'n':
 		{
 			const auto word = getWord(exp, i);
 			const auto it = s_key_words.find(word);
 			if (it != s_key_words.end())
 			{
-				i += word.size();
+				i += word.size() - 1;
 				pushToken(tokens, word, it->second);
 			}
 			break;
