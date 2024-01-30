@@ -21,6 +21,8 @@ std::string toString(TokenType type)
         return "LeftParen";
     case TokenType::RightParen:
         return "RightParen";
+    case TokenType::String:
+        return "String";
     default:
         throw std::invalid_argument{ "Invalid token type" };
     }

@@ -12,6 +12,7 @@ enum class TokenType
     Negative,
     LeftParen,
     RightParen,
+    String,
     Eof
 };
 
