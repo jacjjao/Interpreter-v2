@@ -19,9 +19,10 @@ LexError Lexer::error(const int line, const std::string& err_msg)
 
 std::string Lexer::getWord(const std::string_view input, const size_t offset, const char sep)
 {
-	auto pos = input.find_first_of(sep, offset);
-	assert(pos != std::string_view::npos);
-	return std::string(input.begin() + offset, input.begin() + pos);
+	size_t i = offset + 1;
+	while (i < input.size() && input[i] != sep)
+		++i;
+	return std::string(input.begin() + offset, input.begin() + i);
 }
 
 Lexer::Lexer(std::string input) :
@@ -45,6 +46,13 @@ std::vector<Token> Lexer::genTokens()
 		}
 	}
 	return tokens;
+}
+
+std::optional<char> Lexer::peek(const size_t offset) const
+{
+	if (offset + 1 >= input_.size())
+		return std::nullopt;
+	return input_[offset + 1];
 }
 
 void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
@@ -87,8 +95,44 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 			break;
 		}
 
+		case '>':
+			if (auto c = peek(i); c && *c == '=')
+			{
+				pushToken(tokens, ">=", TokenType::GreaterEq);
+				++i;
+			}
+			else
+				pushToken(tokens, ">", TokenType::Greater);
+			break;
+
+		case '<':
+			if (auto c = peek(i); c && *c == '=')
+			{
+				pushToken(tokens, "<=", TokenType::LessEq);
+				++i;
+			}
+			else
+				pushToken(tokens, "<", TokenType::Less);
+			break;
+
+		case '=':
+			if (auto c = peek(i); c && *c == '=')
+			{
+				pushToken(tokens, "==", TokenType::Equal);
+				++i;
+			}
+			else
+				throw error(line_count_, (std::format("Invalid symbol: \'{}\'", exp[i])));
+			break;
+
 		case '!':
-			pushToken(tokens, "!", TokenType::Bang);
+			if (auto c = peek(i); c && *c == '=')
+			{
+				pushToken(tokens, "!=", TokenType::NotEqual);
+				++i;
+			}
+			else 
+				pushToken(tokens, "!", TokenType::Bang);
 			break;
 
 		case '+':

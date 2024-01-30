@@ -16,7 +16,13 @@ enum class TokenType
     RightParen,
     String,
     Bool,
-    Bang
+    Bang,
+    GreaterEq,
+    LessEq,
+    Equal,
+    NotEqual,
+    Greater,
+    Less
 };
 
 std::string toString(TokenType type);

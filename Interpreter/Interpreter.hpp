@@ -35,6 +35,7 @@ public:
 private:
     RuntimeError error(const Token& token, const std::string& err_msg);
 
+    void checkHaveValue(const Token& token, const std::optional<Expr::r_type>& left, const std::optional<Expr::r_type>& right);
     void checkBoolOperand(const Token& token, const std::optional<Expr::r_type>& operand);
     void checkNumberOperand(const Token& token, const std::optional<Expr::r_type>& operand);
     void checkNumberOperand(const Token& token, const std::optional<Expr::r_type>& left, const std::optional<Expr::r_type>& right);

@@ -29,6 +29,18 @@ std::string toString(TokenType type)
         return "Bang";
     case TokenType::Eoe:
         return "Eoe";
+    case TokenType::GreaterEq:
+        return "GreaterEq";
+    case TokenType::LessEq:
+        return "LessEq";
+    case TokenType::Equal:
+        return "Equal";
+    case TokenType::NotEqual:
+        return "NotEqual";
+    case TokenType::Greater:
+        return "Greater";
+    case TokenType::Less:
+        return "Less";
     default:
         throw std::invalid_argument{ "Invalid token type" };
     }

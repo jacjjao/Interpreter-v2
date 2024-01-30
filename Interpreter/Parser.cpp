@@ -18,7 +18,10 @@ std::unique_ptr<Expr> Parser::parse()
 {
     try
     {
-        return expression();
+        auto expr = expression();
+        if (!atEnd())
+            throw error(peek(), "Expect expression.");
+        return expr;
     }
     catch (const ParseError& e)
     {
@@ -28,9 +31,30 @@ std::unique_ptr<Expr> Parser::parse()
 
 std::unique_ptr<Expr> Parser::expression()
 {
+    return equality();
+}
+
+std::unique_ptr<Expr> Parser::equality()
+{
+    auto expr = comparison();
+    while (match({ TokenType::Equal, TokenType::NotEqual }))
+    {
+        auto op = previous();
+        auto rhs = comparison();
+        expr = std::unique_ptr<Expr>(new BinaryExpr(std::move(expr), op, std::move(rhs)));
+    }
+    return expr;
+}
+
+std::unique_ptr<Expr> Parser::comparison()
+{
     auto expr = term();
-    if (!atEnd())
-        throw error(peek(), "Expect expression.");
+    while (match({ TokenType::Greater, TokenType::GreaterEq, TokenType::Less, TokenType::LessEq }))
+    {
+        auto op = previous();
+        auto rhs = term();
+        expr = std::unique_ptr<Expr>(new BinaryExpr(std::move(expr), op, std::move(rhs)));
+    }
     return expr;
 }
 

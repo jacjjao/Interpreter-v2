@@ -21,6 +21,7 @@ public:
     std::vector<Token> genTokens();
     
 private:
+    std::optional<char> peek(size_t offset) const;
     void lexInput(std::vector<Token>& tokens, std::string_view exp);
 
     void pushToken(std::vector<Token>& tokens, std::string str, const TokenType type);

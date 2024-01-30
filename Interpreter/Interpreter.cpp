@@ -43,6 +43,30 @@ std::optional<Expr::r_type> Interpreter::visitBinaryExpr(BinaryExpr& expr)
     case TokenType::Div:
         checkNumberOperand(expr.token, lhs, rhs);
         return std::get<double>(*lhs) / std::get<double>(*rhs);
+
+    case TokenType::NotEqual:
+        checkHaveValue(expr.token, lhs, rhs);
+        return lhs != rhs;
+
+    case TokenType::Equal:
+        checkHaveValue(expr.token, lhs, rhs);
+        return lhs == rhs;
+
+    case TokenType::GreaterEq:
+        checkHaveValue(expr.token, lhs, rhs);
+        return lhs >= rhs;
+
+    case TokenType::LessEq:
+        checkHaveValue(expr.token, lhs, rhs);
+        return lhs <= rhs;
+
+    case TokenType::Greater:
+        checkHaveValue(expr.token, lhs, rhs);
+        return lhs > rhs;
+
+    case TokenType::Less:
+        checkHaveValue(expr.token, lhs, rhs);
+        return lhs < rhs;
     }
     throw error(expr.token, std::format("Invalid token: {} for binary expression.", toString(expr.token.type)).c_str());
 }
@@ -86,6 +110,13 @@ RuntimeError Interpreter::error(const Token& token, const std::string& err_msg)
 {
     Lox::runtimeError(token.line, err_msg.c_str());
     return RuntimeError(token, err_msg.c_str());
+}
+
+void Interpreter::checkHaveValue(const Token& token, const std::optional<Expr::r_type>& left, const std::optional<Expr::r_type>& right)
+{
+    if (left && right && left->index() == right->index())
+        return;
+    throw error(token, "Operand must exist.");
 }
 
 void Interpreter::checkBoolOperand(const Token& token, const std::optional<Expr::r_type>& operand)
