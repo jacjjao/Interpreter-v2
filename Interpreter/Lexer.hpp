@@ -26,7 +26,6 @@ private:
 
     void pushToken(std::vector<Token>& tokens, std::string str, const TokenType type);
     LexError error(int line, const std::string& err_msg);
-    std::string getWord(std::string_view input, size_t offset);
 
     std::string input_;
     int line_count_;

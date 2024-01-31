@@ -17,14 +17,6 @@ LexError Lexer::error(const int line, const std::string& err_msg)
 	return LexError(err_msg);
 }
 
-std::string Lexer::getWord(const std::string_view input, const size_t offset)
-{
-	size_t i = offset + 1;
-	while (i < input.size() && std::isalpha(input[i]))
-		++i;
-	return std::string(input.begin() + offset, input.begin() + i);
-}
-
 Lexer::Lexer(std::string input) :
 	input_(std::move(input)),
 	line_count_(1)
@@ -75,32 +67,38 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 	std::string buf;
 	for (size_t i = 0; i < exp.size(); ++i)
 	{
-		if (std::isdigit(exp[i]) || exp[i] == '.')
+		if (std::isdigit(exp[i]))
 		{
-			buf.push_back(exp[i]);
+			buf.clear();
+			while (i < exp.size() && (std::isdigit(exp[i]) || exp[i] == '.'))
+			{
+				buf.push_back(exp[i]);
+				++i;
+			}
+			--i;
+			pushToken(tokens, buf, TokenType::Number);
 			continue;
 		}
 
-		if (!buf.empty())
+		if (std::isalpha(exp[i]))
 		{
-			pushToken(tokens, buf, TokenType::Number);
 			buf.clear();
+			while (i < exp.size() && std::isalpha(exp[i]))
+			{
+				buf.push_back(exp[i]);
+				++i;
+			}
+			--i;
+			const auto it = s_key_words.find(buf);
+			if (it != s_key_words.end())
+				pushToken(tokens, buf, it->second);
+			else
+				throw error(line_count_, "Invalid keyword.");
+			continue;
 		}
 
 		switch (exp[i])
 		{
-		case 't': case 'f': case 'n':
-		{
-			const auto word = getWord(exp, i);
-			const auto it = s_key_words.find(word);
-			if (it != s_key_words.end())
-			{
-				i += word.size() - 1;
-				pushToken(tokens, word, it->second);
-			}
-			break;
-		}
-
 		case '>':
 			if (auto c = peek(i); c && *c == '=')
 			{
@@ -192,9 +190,6 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 			throw error(line_count_, (std::format("Invalid symbol: \'{}\'", exp[i])));
 		}
 	}
-
-	if (!buf.empty())
-		pushToken(tokens, buf, TokenType::Number);
 
 	pushToken(tokens, "", TokenType::Eoe);
 }
