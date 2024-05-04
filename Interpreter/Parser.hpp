@@ -21,7 +21,7 @@ public:
 private:
     ParseError error(const Token& token, const char* err_msg);
 
-    std::unique_ptr<Expr> statement();
+    std::unique_ptr<Expr> declaration();
     std::unique_ptr<Expr> expression();
     std::unique_ptr<Expr> assignment();
     std::unique_ptr<Expr> equality();

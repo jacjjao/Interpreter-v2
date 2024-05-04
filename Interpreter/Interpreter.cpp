@@ -1,16 +1,68 @@
 #include "pch.hpp"
 #include "Interpreter.hpp"
 #include "Lox.hpp"
+#include "ScopedGuard.hpp"
+#include "ASTPrinter.hpp"
 
-void Interpreter::interpret(Expr& expr)
+EnvList::EnvList()
+{
+    env_.emplace_front();
+}
+
+void EnvList::enterBlock()
+{
+    env_.emplace_front();
+}
+
+void EnvList::exitBlock()
+{
+    assert(env_.size() >= 2);
+    env_.pop_front();
+}
+
+bool EnvList::declare(const std::string& name, const Expr::r_type& val)
+{
+    return env_.front().declare(name, val);
+}
+
+std::optional<Expr::r_type> EnvList::get(const std::string& name)
+{
+    for (auto& e : env_) 
+    {
+        auto v = e.get(name);
+        if (v)
+        {
+            return *v;
+        }
+    }
+    return std::nullopt;
+}
+
+bool EnvList::set(const std::string& name, const Expr::r_type& val)
+{
+    for (auto& e : env_)
+    {
+        if (e.set(name, val))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+Expr::r_type Interpreter::interpret(Expr& expr)
 {
     try
     {
-        Lox::printInterpretResult(visit(expr));
+        ASTPrinter().print(expr);
+        auto val = visit(expr);
+        Lox::printInterpretResult(val);
+        return val;
     }
     catch (const RuntimeError&)
     {
     }
+    return {};
 }
 
 Expr::r_type Interpreter::visit(Expr& expr)
@@ -130,6 +182,19 @@ Expr::r_type Interpreter::visitVariable(Variable& var)
     if (!v) 
         throw std::runtime_error(std::format("Variable {} does not exist!\n", var.name_.str));
     return *v;
+}
+
+Expr::r_type Interpreter::visitBlock(BlockExpr& block)
+{
+    env_.enterBlock();
+    ScopedGuard([this] { env_.exitBlock(); });
+
+    Expr::r_type val;
+    for (auto& expr : block.exprs_)
+    {
+        val = interpret(*expr);
+    }
+    return val;
 }
 
 RuntimeError Interpreter::error(const Token& token, const std::string& err_msg)

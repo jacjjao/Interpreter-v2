@@ -28,4 +28,6 @@ public:
     Expr::r_type visitAssignment(Assignment& assign) override;
 
     Expr::r_type visitVariable(Variable& var) override;
+
+    Expr::r_type visitBlock(BlockExpr& block) override;
 };

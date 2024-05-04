@@ -75,3 +75,9 @@ Expr::r_type ASTPrinter::visitVariable(Variable& var)
     std::cout << std::format("Token Type: {}  name: {}\n", toString(TokenType::Identifier), var.name_.str);
     return {};
 }
+
+Expr::r_type ASTPrinter::visitBlock(BlockExpr&)
+{
+    std::cout << "New Block\n";
+    return {};
+}

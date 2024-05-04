@@ -20,10 +20,7 @@ std::vector<std::unique_ptr<Expr>> Parser::parse()
     try
     {
         while (!atEnd()) {
-            exprs.push_back(statement());
-            if (cur_ >= tokens_.size() || consume().type != TokenType::Eoe) {
-                throw error(previous(), "Expect ';'");
-            }
+            exprs.push_back(declaration());
         }
         return exprs;
     }
@@ -33,7 +30,7 @@ std::vector<std::unique_ptr<Expr>> Parser::parse()
     }
 }
 
-std::unique_ptr<Expr> Parser::statement()
+std::unique_ptr<Expr> Parser::declaration()
 {
     if (match({ TokenType::Declaration }))
     {
@@ -44,9 +41,24 @@ std::unique_ptr<Expr> Parser::statement()
         {
             initializer = expression();
         }
+
+        consume(TokenType::Eoe, "Expect ';'");
         return std::unique_ptr<Expr>(new Declaration(name, std::move(initializer)));
     }
-    return expression(); 
+    else if (match({ TokenType::BlockBegin }))
+    {
+        std::vector<std::unique_ptr<Expr>> exprs;
+        while (!atEnd() && peek().type != TokenType::BlockEnd)
+        {
+            exprs.push_back(declaration());
+        }
+
+        consume(TokenType::BlockEnd, "Expect '}'");
+        return std::unique_ptr<Expr>(new BlockExpr(std::move(exprs)));
+    }
+    auto expr = expression();
+    consume(TokenType::Eoe, "Expect ';'");
+    return expr; 
 }
 
 std::unique_ptr<Expr> Parser::expression()
@@ -191,5 +203,5 @@ bool Parser::match(std::initializer_list<TokenType> types)
 
 bool Parser::atEnd() const
 {
-    return cur_ >= tokens_.size() || peek().type == TokenType::Eoe;
+    return cur_ >= tokens_.size();
 }

@@ -140,6 +140,14 @@ void Lexer::lexInput(std::vector<Token>& tokens)
 			pushToken(tokens, ")", TokenType::RightParen);
 			break;
 
+		case '{':
+			pushToken(tokens, "{", TokenType::BlockBegin);
+			break;
+
+		case '}':
+			pushToken(tokens, "}", TokenType::BlockEnd);
+			break;
+
 		case '\n':
 			++line_count_;
 			break;

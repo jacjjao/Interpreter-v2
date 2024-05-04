@@ -12,7 +12,6 @@ void cmdMode()
 {
 	std::cout << "Type \"exit\" to exit the program.\n";
 	Interpreter env;
-	ASTPrinter printer;
 	while (true)
 	{
 		std::string input;
@@ -30,7 +29,6 @@ void cmdMode()
 			Parser parser(tokens);
 			auto exprs = parser.parse();
 			for (auto& expr : exprs) {
-				printer.print(*expr);
 				env.interpret(*expr);
 			}
 		}
@@ -63,7 +61,6 @@ void fileMode(const std::filesystem::path& path)
 		Parser parser(tokens);
 		auto exprs = parser.parse();
 		for (auto& expr : exprs) {
-			ASTPrinter().print(*expr);
 			env.interpret(*expr);
 		}
 	}

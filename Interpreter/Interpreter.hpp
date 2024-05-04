@@ -14,10 +14,29 @@ private:
     Token token_;
 };
 
+class EnvList
+{
+public:
+    EnvList();
+
+    void enterBlock();
+
+    void exitBlock();
+
+    bool declare(const std::string& name, const Expr::r_type& val);
+
+    std::optional<Expr::r_type> get(const std::string& name);
+
+    bool set(const std::string& name, const Expr::r_type& val);
+
+private:
+    std::list<Environment> env_;
+};
+
 class Interpreter : ASTVisitor
 {
 public:
-    void interpret(Expr& expr);
+    Expr::r_type interpret(Expr& expr);
 
     Expr::r_type visit(Expr& expr) override;
 
@@ -41,6 +60,8 @@ public:
 
     Expr::r_type visitVariable(Variable& var) override;
 
+    Expr::r_type visitBlock(BlockExpr& block) override;
+
 private:
     RuntimeError error(const Token& token, const std::string& err_msg);
 
@@ -50,5 +71,5 @@ private:
     void checkNumberOperand(const Token& token, const Expr::r_type& left, const Expr::r_type& right);
     void checkNumberOrStringOperand(const Token& token, const Expr::r_type& left, const Expr::r_type& right);
 
-    Environment env_;
+    EnvList env_;
 };

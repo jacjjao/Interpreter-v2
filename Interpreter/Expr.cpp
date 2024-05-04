@@ -131,3 +131,13 @@ Expr::r_type Variable::accept(ASTVisitor& visitor)
 {
     return visitor.visitVariable(*this);
 }
+
+BlockExpr::BlockExpr(std::vector<std::unique_ptr<Expr>> exprs) : 
+    exprs_(std::move(exprs))
+{
+}
+
+Expr::r_type BlockExpr::accept(ASTVisitor& visitor)
+{
+    return visitor.visitBlock(*this);
+}

@@ -145,3 +145,14 @@ public:
 
     const Token name_;
 };
+
+class BlockExpr : public Expr
+{
+public:
+    BlockExpr(std::vector<std::unique_ptr<Expr>> exprs);
+    ~BlockExpr() override = default;
+
+    Expr::r_type accept(ASTVisitor& visitor) override;
+
+    const std::vector<std::unique_ptr<Expr>> exprs_;
+};
