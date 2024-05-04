@@ -47,7 +47,26 @@ std::unique_ptr<Expr> Parser::statement()
 
 std::unique_ptr<Expr> Parser::expression()
 {
-    return equality();
+    return assignment();
+}
+
+std::unique_ptr<Expr> Parser::assignment()
+{
+    auto expr = equality();
+    if (match({ TokenType::Assignment }))
+    {
+        auto equal = previous();
+        auto val = assignment();
+
+        if (auto var = dynamic_cast<Variable*>(expr.get()); var)
+        {
+            auto a = std::unique_ptr<Expr>(new Assignment(var->name_, std::move(val)));
+            return a;
+        }
+
+        error(equal, "Invalid assignment");
+    }
+    return expr;
 }
 
 std::unique_ptr<Expr> Parser::equality()

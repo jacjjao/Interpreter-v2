@@ -119,6 +119,22 @@ private:
     const std::unique_ptr<Expr> initializer_;
 };
 
+class Assignment : public Expr
+{
+public:
+    Assignment(const Token& name, std::unique_ptr<Expr> val);
+    ~Assignment() override = default;
+
+    Expr::r_type accept(ASTVisitor& visitor) override;
+
+    Expr::r_type getVal(ASTVisitor& visitor);
+
+    const Token name_;
+
+private:
+    const std::unique_ptr<Expr> val_;
+};
+
 class Variable : public Expr
 {
 public:

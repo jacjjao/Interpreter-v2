@@ -37,6 +37,10 @@ void cmdMode()
 		catch (const LexError&)
 		{
 		}
+		catch (const std::runtime_error& e)
+		{
+			fprintf(stderr, "Runtime error %s\n", e.what());
+		}
 	}
 }
 

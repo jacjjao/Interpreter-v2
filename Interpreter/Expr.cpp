@@ -105,6 +105,23 @@ Expr::r_type Declaration::getInitVal(ASTVisitor& visitor)
     return visitor.visit(*initializer_);
 }
 
+Assignment::Assignment(const Token& name, std::unique_ptr<Expr> val) : 
+    name_(name),
+    val_(std::move(val))
+{
+}
+
+Expr::r_type Assignment::accept(ASTVisitor& visitor)
+{
+    return visitor.visitAssignment(*this);
+}
+
+Expr::r_type Assignment::getVal(ASTVisitor& visitor)
+{
+    return visitor.visit(*val_);
+}
+
+
 Variable::Variable(const Token& name) : 
     name_(name)
 {

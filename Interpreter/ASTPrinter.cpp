@@ -64,6 +64,12 @@ Expr::r_type ASTPrinter::visitDeclaration(Declaration& dec)
     return {};
 }
 
+Expr::r_type ASTPrinter::visitAssignment(Assignment& assign)
+{
+    std::cout << std::format("Token type: {}  name: {}\n", toString(TokenType::Assignment), assign.name_.str);
+    return {};
+}
+
 Expr::r_type ASTPrinter::visitVariable(Variable& var)
 {
     std::cout << std::format("Token Type: {}  name: {}\n", toString(TokenType::Identifier), var.name_.str);

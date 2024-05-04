@@ -116,6 +116,14 @@ Expr::r_type Interpreter::visitDeclaration(Declaration& dec)
     return val;
 }
 
+Expr::r_type Interpreter::visitAssignment(Assignment& assign)
+{
+    const auto val = assign.getVal(*this);
+    if (!env_.set(assign.name_.str, val))
+        throw std::runtime_error(std::format("Variable {} does not exist!\n", assign.name_.str));
+    return val;
+}
+
 Expr::r_type Interpreter::visitVariable(Variable& var)
 {
     const auto v = env_.get(var.name_.str);

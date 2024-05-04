@@ -37,6 +37,8 @@ public:
 
     Expr::r_type visitDeclaration(Declaration& dec) override;
 
+    Expr::r_type visitAssignment(Assignment& assign) override;
+
     Expr::r_type visitVariable(Variable& var) override;
 
 private:
