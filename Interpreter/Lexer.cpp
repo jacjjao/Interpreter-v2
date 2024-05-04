@@ -142,7 +142,6 @@ void Lexer::lexInput(std::vector<Token>& tokens)
 
 		case '\n':
 			++line_count_;
-			pushToken(tokens, "", TokenType::Eoe);
 			break;
 
 		case ' ': case '\r': case '\0':
@@ -160,11 +159,10 @@ void Lexer::lexInput(std::vector<Token>& tokens)
 			pushToken(tokens, std::move(str), TokenType::String);
 			break;
 		}
+		}
 
-		default:
-			throw error(line_count_, (std::format("Invalid symbol: \'{}\'", input_[i])));
+		if (EOE_CHAR == input_[i]) {
+			pushToken(tokens, "", TokenType::Eoe);
 		}
 	}
-
-	pushToken(tokens, "", TokenType::Eoe);
 }

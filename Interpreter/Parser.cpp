@@ -21,8 +21,8 @@ std::vector<std::unique_ptr<Expr>> Parser::parse()
     {
         while (!atEnd()) {
             exprs.push_back(statement());
-            if (auto t = consume(); t.type != TokenType::Eoe) {
-                throw error(t, "Expect eoe");
+            if (cur_ >= tokens_.size() || consume().type != TokenType::Eoe) {
+                throw error(previous(), "Expect ';'");
             }
         }
         return exprs;

@@ -28,6 +28,8 @@ enum class TokenType
     Declaration
 };
 
+static inline constexpr char EOE_CHAR = ';';
+
 std::string toString(TokenType type);
 
 constexpr std::optional<char> toChar(TokenType type)
