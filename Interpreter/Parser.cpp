@@ -19,8 +19,12 @@ std::vector<std::unique_ptr<Expr>> Parser::parse()
     std::vector<std::unique_ptr<Expr>> exprs;
     try
     {
-        while (!atEnd())
+        while (!atEnd()) {
             exprs.push_back(statement());
+            if (auto t = consume(); t.type != TokenType::Eoe) {
+                throw error(t, "Expect eoe");
+            }
+        }
         return exprs;
     }
     catch (const ParseError&)

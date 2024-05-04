@@ -29,14 +29,7 @@ std::vector<Token> Lexer::genTokens()
 	line_count_ = 1;
 	constexpr auto delimiter = toChar(TokenType::Eoe);
 	static_assert(delimiter.has_value());
-	for (const auto& exp : input_ | std::views::split(*delimiter))
-	{
-		lexInput(tokens, std::string_view(exp.begin(), exp.end()));
-		if constexpr (*delimiter == '\n')
-		{
-			++line_count_;
-		}
-	}
+	lexInput(tokens);
 	return tokens;
 }
 
@@ -47,17 +40,17 @@ std::optional<char> Lexer::peek(const size_t offset) const
 	return input_[offset + 1];
 }
 
-void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
+void Lexer::lexInput(std::vector<Token>& tokens)
 {
 	std::string buf;
-	for (size_t i = 0; i < exp.size(); ++i)
+	for (size_t i = 0; i < input_.size(); ++i)
 	{
-		if (std::isdigit(exp[i]))
+		if (std::isdigit(input_[i]))
 		{
 			buf.clear();
-			while (i < exp.size() && (std::isdigit(exp[i]) || exp[i] == '.'))
+			while (i < input_.size() && (std::isdigit(input_[i]) || input_[i] == '.'))
 			{
-				buf.push_back(exp[i]);
+				buf.push_back(input_[i]);
 				++i;
 			}
 			--i;
@@ -65,12 +58,12 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 			continue;
 		}
 
-		if (std::isalpha(exp[i]))
+		if (std::isalpha(input_[i]))
 		{
 			buf.clear();
-			while (i < exp.size() && exp[i] != ' ')
+			while (i < input_.size() && (std::isdigit(input_[i]) || std::isalpha(input_[i])))
 			{
-				buf.push_back(exp[i]);
+				buf.push_back(input_[i]);
 				++i;
 			}
 			--i;
@@ -81,7 +74,7 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 			continue;
 		}
 
-		switch (exp[i])
+		switch (input_[i])
 		{
 		case '>':
 			if (auto c = peek(i); c && *c == '=')
@@ -149,6 +142,7 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 
 		case '\n':
 			++line_count_;
+			pushToken(tokens, "", TokenType::Eoe);
 			break;
 
 		case ' ': case '\r': case '\0':
@@ -156,19 +150,19 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 
 		case '\"': case '\'':
 		{
-			char c = exp[i];
+			char c = input_[i];
 			++i;
-			auto quote = std::find(exp.begin() + i, exp.end(), c);
-			if (quote == exp.end())
+			auto quote = std::find(input_.begin() + i, input_.end(), c);
+			if (quote == input_.end())
 				throw error(line_count_, std::format("Expect character '{}'", c));
-			std::string str(exp.begin() + i, quote);
+			std::string str(input_.begin() + i, quote);
 			i += str.size();
 			pushToken(tokens, std::move(str), TokenType::String);
 			break;
 		}
 
 		default:
-			throw error(line_count_, (std::format("Invalid symbol: \'{}\'", exp[i])));
+			throw error(line_count_, (std::format("Invalid symbol: \'{}\'", input_[i])));
 		}
 	}
 

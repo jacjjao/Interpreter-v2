@@ -22,7 +22,7 @@ public:
     
 private:
     std::optional<char> peek(size_t offset) const;
-    void lexInput(std::vector<Token>& tokens, std::string_view exp);
+    void lexInput(std::vector<Token>& tokens);
 
     void pushToken(std::vector<Token>& tokens, std::string str, const TokenType type);
     LexError error(int line, const std::string& err_msg);

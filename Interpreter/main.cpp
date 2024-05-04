@@ -51,25 +51,20 @@ void fileMode(const std::filesystem::path& path)
 	
 	try
 	{
+		Interpreter env;
+
 		file.open(path);
 		std::stringstream ss;
 		ss << file.rdbuf();
 		Lexer lexer(std::move(ss).str());
+
 		auto tokens = lexer.genTokens();
-		auto expr_begin = tokens.begin();
-		while (expr_begin != tokens.end())
-		{
-			auto expr_end = std::find_if(expr_begin + 1, tokens.end(), [](const Token& t) -> bool { return t.type == TokenType::Eoe; });
-			if (expr_end == tokens.end())
-				return;
-			++expr_end; // Inorder to include the Eof token
-			Parser parser(std::span(expr_begin, expr_end));
-			auto exprs = parser.parse();
-			for (auto& expr : exprs) {
-				ASTPrinter().print(*expr);
-				Interpreter().interpret(*expr);
-			}
-			expr_begin = expr_end;
+
+		Parser parser(tokens);
+		auto exprs = parser.parse();
+		for (auto& expr : exprs) {
+			ASTPrinter().print(*expr);
+			env.interpret(*expr);
 		}
 	}
 	catch (const LexError&)
