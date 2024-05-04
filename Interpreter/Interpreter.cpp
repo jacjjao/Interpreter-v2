@@ -73,7 +73,7 @@ Expr::r_type Interpreter::visitUnaryExpr(UnaryExpr& expr)
     auto v = visit(*expr.rhs);
     switch (expr.token.type)
     {
-    case TokenType::Negative:
+    case TokenType::Minus:
         checkNumberOperand(expr.token, v);
         return -std::get<double>(v);
     case TokenType::Bang:

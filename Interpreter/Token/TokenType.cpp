@@ -15,8 +15,6 @@ std::string toString(TokenType type)
         return "Mul";
     case TokenType::Div:
         return "Div";
-    case TokenType::Negative:
-        return "Negative";
     case TokenType::LeftParen:
         return "LeftParen";
     case TokenType::RightParen:

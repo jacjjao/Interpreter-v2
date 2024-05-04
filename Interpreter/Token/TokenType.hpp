@@ -11,7 +11,6 @@ enum class TokenType
     Minus,
     Mul,
     Div,
-    Negative,
     LeftParen,
     RightParen,
     String,

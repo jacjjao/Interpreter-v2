@@ -49,21 +49,6 @@ std::optional<char> Lexer::peek(const size_t offset) const
 
 void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 {
-	const auto isOperatorType = [](TokenType type) -> bool {
-		return type == TokenType::Bang ||
-			type == TokenType::Div ||
-			type == TokenType::Minus ||
-			type == TokenType::Mul ||
-			type == TokenType::LeftParen ||
-			type == TokenType::Plus || 
-			type == TokenType::Equal || 
-			type == TokenType::GreaterEq || 
-			type == TokenType::LessEq || 
-			type == TokenType::NotEqual || 
-			type == TokenType::Greater || 
-			type == TokenType::Less;
-	};
-
 	std::string buf;
 	for (size_t i = 0; i < exp.size(); ++i)
 	{
@@ -144,10 +129,7 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 			break;
 
 		case '-':
-			if (tokens.empty() || isOperatorType(tokens.back().type))
-				pushToken(tokens, "-", TokenType::Negative);
-			else
-				pushToken(tokens, "-", TokenType::Minus);
+			pushToken(tokens, "-", TokenType::Minus);
 			break;
 
 		case '*':

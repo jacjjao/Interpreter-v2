@@ -84,7 +84,7 @@ std::unique_ptr<Expr> Parser::factor()
 
 std::unique_ptr<Expr> Parser::unary()
 {
-    while (match({ TokenType::Negative, TokenType::Bang }))
+    while (match({ TokenType::Minus, TokenType::Bang }))
     {
         auto op = previous();
         auto rhs = unary();
