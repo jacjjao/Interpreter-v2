@@ -35,6 +35,7 @@ private:
         mp.insert({ "true", TokenType::Bool });
         mp.insert({ "false", TokenType::Bool });
         mp.insert({ "null", TokenType::Null });
+        mp.insert({ "let", TokenType::Declaration });
         return mp;
     }();
 };

@@ -2,6 +2,7 @@
 
 #include "Expr.hpp"
 #include "ASTVisitor.hpp"
+#include "Environment.hpp"
 #include <stdexcept>
 
 class RuntimeError : public std::runtime_error 
@@ -34,6 +35,10 @@ public:
 
     Expr::r_type visitNullExpr(NullExpr& expr) override;
 
+    Expr::r_type visitDeclaration(Declaration& dec) override;
+
+    Expr::r_type visitVariable(Variable& var) override;
+
 private:
     RuntimeError error(const Token& token, const std::string& err_msg);
 
@@ -42,4 +47,6 @@ private:
     void checkNumberOperand(const Token& token, const Expr::r_type& operand);
     void checkNumberOperand(const Token& token, const Expr::r_type& left, const Expr::r_type& right);
     void checkNumberOrStringOperand(const Token& token, const Expr::r_type& left, const Expr::r_type& right);
+
+    Environment env_;
 };

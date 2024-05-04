@@ -31,17 +31,17 @@ void Lox::printInterpretResult(const Expr::r_type& result)
         std::cout << "null\n";
         return;
     }
-    if (std::holds_alternative<double>(result))
+    else if (std::holds_alternative<double>(result))
     {
         std::cout << std::format("{}\n", std::get<double>(result));
         return;
     }
-    if (std::holds_alternative<std::string>(result))
+    else if (std::holds_alternative<std::string>(result))
     {
         std::cout << std::format("\'{}\'\n", std::get<std::string>(result));
         return;
     }
-    if (std::holds_alternative<bool>(result))
+    else if (std::holds_alternative<bool>(result))
     {
         bool b = std::get<bool>(result);
         if (b)

@@ -102,3 +102,30 @@ public:
     
     const Token token;
 };
+
+class Declaration : public Expr
+{
+public:
+    Declaration(const Token& name, std::unique_ptr<Expr> initializer);
+    ~Declaration() override = default;
+
+    Expr::r_type accept(ASTVisitor& visitor) override;
+
+    Expr::r_type getInitVal(ASTVisitor& visitor);
+
+    const Token name_;
+
+private:
+    const std::unique_ptr<Expr> initializer_;
+};
+
+class Variable : public Expr
+{
+public:
+    Variable(const Token& name);
+    ~Variable() override = default;
+
+    Expr::r_type accept(ASTVisitor& visitor) override;
+
+    const Token name_;
+};

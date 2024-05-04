@@ -11,6 +11,8 @@
 void cmdMode()
 {
 	std::cout << "Type \"exit\" to exit the program.\n";
+	Interpreter env;
+	ASTPrinter printer;
 	while (true)
 	{
 		std::string input;
@@ -26,11 +28,10 @@ void cmdMode()
 				std::cout << std::format("{} ", toString(token.type));
 			std::cout << '\n';
 			Parser parser(tokens);
-			auto expr = parser.parse();
-			if (expr)
-			{
-				ASTPrinter().print(*expr);
-				Interpreter().interpret(*expr);
+			auto exprs = parser.parse();
+			for (auto& expr : exprs) {
+				printer.print(*expr);
+				env.interpret(*expr);
 			}
 		}
 		catch (const LexError&)
@@ -59,13 +60,10 @@ void fileMode(const std::filesystem::path& path)
 				return;
 			++expr_end; // Inorder to include the Eof token
 			Parser parser(std::span(expr_begin, expr_end));
-			auto expr = parser.parse();
-			if (expr)
-			{
+			auto exprs = parser.parse();
+			for (auto& expr : exprs) {
 				ASTPrinter().print(*expr);
 				Interpreter().interpret(*expr);
-				if (Lox::hadRuntimeErr())
-					return;
 			}
 			expr_begin = expr_end;
 		}

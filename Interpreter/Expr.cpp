@@ -85,3 +85,32 @@ std::monostate NullExpr::value() const
 {
     return std::monostate();
 }
+
+Declaration::Declaration(const Token& name, std::unique_ptr<Expr> initializer) :
+    name_(name),
+    initializer_(std::move(initializer))
+{
+}
+
+Expr::r_type Declaration::accept(ASTVisitor& visitor)
+{
+    return visitor.visitDeclaration(*this);
+}
+
+Expr::r_type Declaration::getInitVal(ASTVisitor& visitor)
+{
+    if (!initializer_) {
+        return std::monostate{};
+    }
+    return visitor.visit(*initializer_);
+}
+
+Variable::Variable(const Token& name) : 
+    name_(name)
+{
+}
+
+Expr::r_type Variable::accept(ASTVisitor& visitor)
+{
+    return visitor.visitVariable(*this);
+}

@@ -108,6 +108,22 @@ Expr::r_type Interpreter::visitNullExpr(NullExpr& expr)
     return expr.value();
 }
 
+Expr::r_type Interpreter::visitDeclaration(Declaration& dec)
+{
+    const auto val = dec.getInitVal(*this);
+    if (!env_.declare(dec.name_.str, val))
+        throw std::runtime_error(std::format("Variable {} have been declared!\n", dec.name_.str));
+    return val;
+}
+
+Expr::r_type Interpreter::visitVariable(Variable& var)
+{
+    const auto v = env_.get(var.name_.str);
+    if (!v) 
+        throw std::runtime_error(std::format("Variable {} does not exist!\n", var.name_.str));
+    return *v;
+}
+
 RuntimeError Interpreter::error(const Token& token, const std::string& err_msg)
 {
     Lox::runtimeError(token.line, err_msg.c_str());

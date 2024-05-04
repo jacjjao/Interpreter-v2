@@ -22,4 +22,8 @@ public:
     virtual Expr::r_type visitBoolExpr(BoolExpr& expr) = 0;
 
     virtual Expr::r_type visitNullExpr(NullExpr& expr) = 0;
+
+    virtual Expr::r_type visitDeclaration(Declaration& dec) = 0;
+
+    virtual Expr::r_type visitVariable(Variable& var) = 0;
 };

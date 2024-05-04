@@ -68,17 +68,16 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 		if (std::isalpha(exp[i]))
 		{
 			buf.clear();
-			while (i < exp.size() && std::isalpha(exp[i]))
+			while (i < exp.size() && exp[i] != ' ')
 			{
 				buf.push_back(exp[i]);
 				++i;
 			}
 			--i;
-			const auto it = s_key_words.find(buf);
-			if (it != s_key_words.end())
+			if (auto it = s_key_words.find(buf); it != s_key_words.end())
 				pushToken(tokens, buf, it->second);
 			else
-				throw error(line_count_, "Invalid keyword.");
+				pushToken(tokens, buf, TokenType::Identifier);
 			continue;
 		}
 
@@ -111,7 +110,7 @@ void Lexer::lexInput(std::vector<Token>& tokens, const std::string_view exp)
 				++i;
 			}
 			else
-				throw error(line_count_, (std::format("Invalid symbol: \'{}\'", exp[i])));
+				pushToken(tokens, "=", TokenType::Assignment);
 			break;
 
 		case '!':

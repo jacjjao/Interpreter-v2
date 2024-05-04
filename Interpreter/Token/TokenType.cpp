@@ -41,6 +41,12 @@ std::string toString(TokenType type)
         return "Less";
     case TokenType::Null:
         return "Null";
+    case TokenType::Identifier:
+        return "Identifier";
+    case TokenType::Assignment:
+        return "Assignment";
+    case TokenType::Declaration:
+        return "Declaration";
     default:
         throw std::invalid_argument{ "Invalid token type" };
     }

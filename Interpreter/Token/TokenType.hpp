@@ -22,7 +22,10 @@ enum class TokenType
     NotEqual,
     Greater,
     Less,
-    Null
+    Null,
+    Identifier,
+    Assignment,
+    Declaration
 };
 
 std::string toString(TokenType type);

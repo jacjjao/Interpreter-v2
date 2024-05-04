@@ -57,3 +57,15 @@ Expr::r_type ASTPrinter::visitNullExpr(NullExpr& expr)
     std::cout << std::format("Token Type: {}  str: {}\n", toString(expr.token.type), expr.token.str);
     return {};
 }
+
+Expr::r_type ASTPrinter::visitDeclaration(Declaration& dec)
+{
+    std::cout << std::format("Token type: {}  name: {}\n", toString(TokenType::Declaration), dec.name_.str);
+    return {};
+}
+
+Expr::r_type ASTPrinter::visitVariable(Variable& var)
+{
+    std::cout << std::format("Token Type: {}  name: {}\n", toString(TokenType::Identifier), var.name_.str);
+    return {};
+}

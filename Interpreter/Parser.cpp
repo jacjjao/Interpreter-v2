@@ -14,19 +14,35 @@ ParseError Parser::error(const Token& token, const char* err_msg)
     return ParseError(err_msg);
 }
 
-std::unique_ptr<Expr> Parser::parse()
+std::vector<std::unique_ptr<Expr>> Parser::parse()
 {
+    std::vector<std::unique_ptr<Expr>> exprs;
     try
     {
-        auto expr = expression();
-        if (!atEnd())
-            throw error(peek(), "Expect expression.");
-        return expr;
+        while (!atEnd())
+            exprs.push_back(statement());
+        return exprs;
     }
     catch (const ParseError&)
     {
-        return nullptr;
+        return {};
     }
+}
+
+std::unique_ptr<Expr> Parser::statement()
+{
+    if (match({ TokenType::Declaration }))
+    {
+        auto name = consume(TokenType::Identifier, "Expect identifier");
+        
+        std::unique_ptr<Expr> initializer = nullptr;
+        if (match({ TokenType::Assignment }))
+        {
+            initializer = expression();
+        }
+        return std::unique_ptr<Expr>(new Declaration(name, std::move(initializer)));
+    }
+    return expression(); 
 }
 
 std::unique_ptr<Expr> Parser::expression()
@@ -103,6 +119,8 @@ std::unique_ptr<Expr> Parser::primary()
         return std::unique_ptr<Expr>(new BoolExpr(previous()));
     if (match({ TokenType::Null }))
         return std::unique_ptr<Expr>(new NullExpr(previous()));
+    if (match({ TokenType::Identifier }))
+        return std::unique_ptr<Expr>(new Variable(previous()));
     if (match({ TokenType::LeftParen }))
     {
         auto expr = expression();
@@ -112,17 +130,17 @@ std::unique_ptr<Expr> Parser::primary()
     throw error(peek(), "Expect expression.");
 }
 
-void Parser::consume()
+Token Parser::consume()
 {
-    ++cur_;
+    return tokens_[cur_++];
 }
 
-void Parser::consume(TokenType type, const char* err_msg)
+Token Parser::consume(TokenType type, const char* err_msg)
 {
     if (atEnd() || peek().type != type)
         throw error(peek(), err_msg);
     else 
-        consume();
+        return consume();
 }
 
 Token Parser::previous() const

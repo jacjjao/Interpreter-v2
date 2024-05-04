@@ -22,4 +22,8 @@ public:
     Expr::r_type visitBoolExpr(BoolExpr& expr) override;
 
     Expr::r_type visitNullExpr(NullExpr& expr) override;
+
+    Expr::r_type visitDeclaration(Declaration& dec) override;
+
+    Expr::r_type visitVariable(Variable& var) override;
 };
