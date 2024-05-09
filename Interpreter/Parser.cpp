@@ -20,7 +20,7 @@ std::vector<std::unique_ptr<Expr>> Parser::parse()
     try
     {
         while (!atEnd()) {
-            exprs.push_back(declaration());
+            exprs.push_back(statement());
         }
         return exprs;
     }
@@ -28,6 +28,39 @@ std::vector<std::unique_ptr<Expr>> Parser::parse()
     {
         return {};
     }
+}
+
+std::unique_ptr<Expr> Parser::statement()
+{
+    if (match({ TokenType::BlockBegin }))
+    {
+        std::vector<std::unique_ptr<Expr>> exprs;
+        while (!atEnd() && peek().type != TokenType::BlockEnd)
+        {
+            exprs.push_back(statement());
+        }
+
+        consume(TokenType::BlockEnd, "Expect '}'");
+        return std::unique_ptr<Expr>(new BlockExpr(std::move(exprs)));
+    }
+    else if (match({ TokenType::If }))
+    {
+        std::unique_ptr<IfExpr> expr(new IfExpr());
+        consume(TokenType::LeftParen, "Expect '(' after if");
+        expr->condition_ = expression();
+        consume(TokenType::RightParen, "Expect ')' after condition.");
+
+        expr->then_branch_ = statement();
+        if (match({ TokenType::Else }))
+        {
+            expr->else_branch_ = statement();
+        }
+
+        return expr;
+    }
+    auto expr = declaration();
+    consume(TokenType::Eoe, "Expect ';'");
+    return expr;
 }
 
 std::unique_ptr<Expr> Parser::declaration()
@@ -42,22 +75,9 @@ std::unique_ptr<Expr> Parser::declaration()
             initializer = expression();
         }
 
-        consume(TokenType::Eoe, "Expect ';'");
         return std::unique_ptr<Expr>(new Declaration(name, std::move(initializer)));
     }
-    else if (match({ TokenType::BlockBegin }))
-    {
-        std::vector<std::unique_ptr<Expr>> exprs;
-        while (!atEnd() && peek().type != TokenType::BlockEnd)
-        {
-            exprs.push_back(declaration());
-        }
-
-        consume(TokenType::BlockEnd, "Expect '}'");
-        return std::unique_ptr<Expr>(new BlockExpr(std::move(exprs)));
-    }
     auto expr = expression();
-    consume(TokenType::Eoe, "Expect ';'");
     return expr; 
 }
 

@@ -30,4 +30,6 @@ public:
     Expr::r_type visitVariable(Variable& var) override;
 
     Expr::r_type visitBlock(BlockExpr& block) override;
+
+    Expr::r_type visitIf(IfExpr& expr) override;
 };

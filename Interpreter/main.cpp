@@ -57,6 +57,9 @@ void fileMode(const std::filesystem::path& path)
 		Lexer lexer(std::move(ss).str());
 
 		auto tokens = lexer.genTokens();
+		/* for (const auto& t : tokens) {
+			std::cout << toString(t.type) << '\n';
+		} */
 
 		Parser parser(tokens);
 		auto exprs = parser.parse();

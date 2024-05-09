@@ -30,4 +30,6 @@ public:
     virtual Expr::r_type visitVariable(Variable& var) = 0;
 
     virtual Expr::r_type visitBlock(BlockExpr& block) = 0;
+
+    virtual Expr::r_type visitIf(IfExpr& expr) = 0;
 };

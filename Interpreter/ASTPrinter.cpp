@@ -81,3 +81,9 @@ Expr::r_type ASTPrinter::visitBlock(BlockExpr&)
     std::cout << "New Block\n";
     return {};
 }
+
+Expr::r_type ASTPrinter::visitIf(IfExpr&)
+{
+    std::cout << "If block\n";
+    return {};
+}

@@ -156,3 +156,15 @@ public:
 
     const std::vector<std::unique_ptr<Expr>> exprs_;
 };
+
+class IfExpr : public Expr
+{
+public:
+    ~IfExpr() override = default;
+
+    Expr::r_type accept(ASTVisitor& visitor) override;
+
+    std::unique_ptr<Expr> condition_;
+    std::unique_ptr<Expr> then_branch_;
+    std::unique_ptr<Expr> else_branch_;
+};

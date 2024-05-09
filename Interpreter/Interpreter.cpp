@@ -197,6 +197,18 @@ Expr::r_type Interpreter::visitBlock(BlockExpr& block)
     return val;
 }
 
+Expr::r_type Interpreter::visitIf(IfExpr& expr)
+{
+    const auto cond = visit(*(expr.condition_));
+    if (std::holds_alternative<bool>(cond) && std::get<bool>(cond) == true) {
+        return visit(*(expr.then_branch_));
+    } 
+    else if (expr.else_branch_) {
+        return visit(*(expr.else_branch_));
+    }
+    return {};
+}
+
 RuntimeError Interpreter::error(const Token& token, const std::string& err_msg)
 {
     Lox::runtimeError(token.line, err_msg.c_str());

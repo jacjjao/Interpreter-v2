@@ -47,6 +47,14 @@ std::string toString(TokenType type)
         return "Assignment";
     case TokenType::Declaration:
         return "Declaration";
+    case TokenType::BlockBegin:
+        return "BlockBegin";
+    case TokenType::BlockEnd:
+        return "BlockEnd";
+    case TokenType::If:
+        return "If";
+    case TokenType::Else:
+        return "Else";
     default:
         throw std::invalid_argument{ "Invalid token type" };
     }

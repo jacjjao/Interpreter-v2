@@ -27,7 +27,9 @@ enum class TokenType
     Assignment,
     Declaration,
     BlockBegin,
-    BlockEnd
+    BlockEnd,
+    If,
+    Else
 };
 
 static inline constexpr char EOE_CHAR = ';';

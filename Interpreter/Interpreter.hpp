@@ -62,6 +62,8 @@ public:
 
     Expr::r_type visitBlock(BlockExpr& block) override;
 
+    Expr::r_type visitIf(IfExpr& expr) override;
+
 private:
     RuntimeError error(const Token& token, const std::string& err_msg);
 

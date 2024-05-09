@@ -141,3 +141,8 @@ Expr::r_type BlockExpr::accept(ASTVisitor& visitor)
 {
     return visitor.visitBlock(*this);
 }
+
+Expr::r_type IfExpr::accept(ASTVisitor& visitor)
+{
+    return visitor.visitIf(*this);
+}
